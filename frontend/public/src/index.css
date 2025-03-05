@@ -1,0 +1,18 @@
+/* Reset some basic styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Set default font */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  color: #333;
+}
+
+/* Styling for the main container */
+#root {
+  padding: 20px;
+}
