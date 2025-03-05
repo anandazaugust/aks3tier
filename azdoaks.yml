@@ -33,7 +33,7 @@ parameters:
 
 variables:
   imageName: 'myapp'  # Your image name
-  acrName: 'acrmar05'  # Your Azure Container Registry name
+  acrName: 'acrmar06'  # Your Azure Container Registry name
   tag: $(Build.BuildId)   # Tag for your image
   # tag2: ${{ parameters.image_tag }}
   # tag: ${{ parameters.image_tag }}
