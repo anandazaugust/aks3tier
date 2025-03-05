@@ -5,10 +5,10 @@
 
 trigger: none
 
-# pool:
-#   vmImage: ubuntu-latest
+pool:
+  vmImage: ubuntu-latest
 
-pool: Default
+# pool: Default
 
 
 # Starter pipeline
