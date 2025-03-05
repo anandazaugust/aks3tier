@@ -1,0 +1,140 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger: none
+
+# pool:
+#   vmImage: ubuntu-latest
+
+pool: Default
+
+
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+# trigger:
+# - main
+
+parameters:
+ - name: what_job
+   type: string
+   default: onlyaksjob
+#  - name: what_tag
+#    type: string
+#  - name: image_tag
+#    type: string
+#    default: $(Build.BuildId)
+
+  
+
+variables:
+  imageName: 'myapp'  # Your image name
+  acrName: 'acrfeb10'  # Your Azure Container Registry name
+  tag: $(Build.BuildId)   # Tag for your image
+  # tag2: ${{ parameters.image_tag }}
+  # tag: ${{ parameters.image_tag }}
+  dockerFilePath: ./Dockerfile
+  IMAGE_NAME : $(acrName).azurecr.io/$(imageName):$(tag)
+  IMAGE_NAME2 : $(acrName).azurecr.io/$(imageName):$(onlyaksjob_tag)
+  akscluster: aksfeb10
+  aksrg: 'rg-mylabmylabuksouthp-example'
+  
+      
+
+jobs:
+
+ - job: buildpushtoacrjob
+   displayName: build&pushtoACRJob
+   condition: ${{ eq(parameters.what_job, 'acrandaksjob' ) }}
+   steps:
+
+        - task: AzureCLI@2
+          displayName: login to ACR task
+          inputs:
+            azureSubscription: 'myaksfeb072025'
+            scriptType: 'bash'
+            scriptLocation: 'inlineScript'
+            inlineScript: 'az acr login --name $(acrName)'
+            # scriptPath: # string. Required when scriptLocation = scriptPath. Script Path. 
+            
+
+        - script: |
+            echo "Building Docker image..."
+            docker build -f $(dockerFilePath) -t $(acrName).azurecr.io/$(imageName):$(tag) .  # Build the image and tag it
+          displayName: 'Build Docker Image script'
+
+        - script: |
+            echo "show docker image..."
+            docker images
+          displayName: 'show docker images script'
+
+        # Step 4: Push Docker Image to Azure Container Registry (ACR)
+        - script: |
+            echo "Pushing Docker image to ACR..."
+            docker push $(acrName).azurecr.io/$(imageName):$(tag)  # Push the image to ACR
+          displayName: 'Push Docker Image to ACR script'
+
+
+ 
+ - job: aksjob1
+   
+   displayName: CreateAKSPOD-JOB1 
+   dependsOn: buildpushtoacrjob
+  #  condition: ${{ eq(parameters.what_job, 'onlyaksjob' ) }}
+   condition:  ${{ in(parameters.what_job, 'acrandaksjob')}}
+
+   steps:
+    - task: KubeloginInstaller@0
+      inputs:
+        kubeloginVersion: 'latest'
+      displayName: installkubelogin
+    - script: |
+            sed -i "s|#{IMAGE_NAME}#|$(IMAGE_NAME)|g" deployaks.yaml
+      displayName: 'Replace Image Name in Manifest'
+      
+
+    - task: KubernetesManifest@1
+      displayName: DeployAKSPOD
+      inputs:
+          action: 'deploy'
+          connectionType: 'azureResourceManager'
+          azureSubscriptionConnection: 'myaksfeb072025'
+          # azureResourceGroup: 'rg-mylabmylabuksouthp-example'
+          azureResourceGroup: $(aksrg)
+          # kubernetesCluster: 'aksfeb08'
+          kubernetesCluster: $(akscluster)
+          manifests: '$(Build.SourcesDirectory)/deployment.yml'
+          # imagePullSecrets: 'my1secret'
+    
+ - job: aksjob2
+   displayName: CreateAKSPOD-JOB2 
+   dependsOn: buildpushtoacrjob
+   condition: ${{ eq(parameters.what_job, 'onlyaksjob' ) }}
+  #  condition:  ${{ in(parameters.what_job, 'onlyaksjob', 'acrandaksjob')}}
+
+   steps:
+    - task: KubeloginInstaller@0
+      inputs:
+        kubeloginVersion: 'latest'
+      displayName: installkubelogin
+    # - script: |
+    #         sed -i "s|#{IMAGE_NAME}#|$(IMAGE_NAME2)|g" deployaks.yaml
+    #   displayName: 'Replace Image Name in Manifest'
+      
+
+    - task: KubernetesManifest@1
+      displayName: DeployAKSPOD
+      inputs:
+          action: 'deploy'
+          connectionType: 'azureResourceManager'
+          azureSubscriptionConnection: 'myaksfeb072025'
+          # azureResourceGroup: 'rg-mylabmylabuksouthp-example'
+          azureResourceGroup: $(aksrg)
+          # kubernetesCluster: 'aksfeb08'
+          kubernetesCluster: $(akscluster)
+          manifests: '$(Build.SourcesDirectory)/deployment.yml'
+          # imagePullSecrets: 'my1secret'
