@@ -91,7 +91,10 @@ jobs:
             scriptLocation: 'inlineScript'
             inlineScript: 'az acr login --name $(acrName)'
             # scriptPath: # string. Required when scriptLocation = scriptPath. Script Path. 
-            
+        - script: |
+            echo "npm installation..."
+            npm install
+          displayName: 'installing npm'  
 
         - script: |
             echo "Building Docker image..."
