@@ -33,7 +33,7 @@ parameters:
 
 variables:
   imageName: 'myapp'  # Your image name
-  acrName: 'acrfeb10'  # Your Azure Container Registry name
+  acrName: 'acrmar05'  # Your Azure Container Registry name
   tag: $(Build.BuildId)   # Tag for your image
   # tag2: ${{ parameters.image_tag }}
   # tag: ${{ parameters.image_tag }}
@@ -78,6 +78,36 @@ jobs:
             docker push $(acrName).azurecr.io/$(imageName):$(tag)  # Push the image to ACR
           displayName: 'Push Docker Image to ACR script'
 
+ - job: onlyacrjob
+   displayName: onlyacrjob
+   condition: ${{ eq(parameters.what_job, 'onlyacrjob' ) }}
+   steps:
+
+        - task: AzureCLI@2
+          displayName: login to ACR task
+          inputs:
+            azureSubscription: 'myaksfeb072025'
+            scriptType: 'bash'
+            scriptLocation: 'inlineScript'
+            inlineScript: 'az acr login --name $(acrName)'
+            # scriptPath: # string. Required when scriptLocation = scriptPath. Script Path. 
+            
+
+        - script: |
+            echo "Building Docker image..."
+            docker build -f $(dockerFilePath) -t $(acrName).azurecr.io/$(imageName):$(tag) .  # Build the image and tag it
+          displayName: 'Build Docker Image script'
+
+        - script: |
+            echo "show docker image..."
+            docker images
+          displayName: 'show docker images script'
+
+        # Step 4: Push Docker Image to Azure Container Registry (ACR)
+        - script: |
+            echo "Pushing Docker image to ACR..."
+            docker push $(acrName).azurecr.io/$(imageName):$(tag)  # Push the image to ACR
+          displayName: 'Push Docker Image to ACR script'
 
  
  - job: aksjob1
