@@ -1,20 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React from 'react';
+import './App.css';  // Optional, if you have a CSS file for App
 
-function App() {
-  const [message, setMessage] = useState('');
-
-  useEffect(() => {
-    axios.get('http://backend-service:3000/api/message')
-      .then(response => setMessage(response.data.message))
-      .catch(error => console.error('Error fetching message:', error));
-  }, []);
-
+const App = () => {
   return (
-    <div>
-      <h1>Frontend: {message}</h1>
+    <div className="App">
+      <header className="App-header">
+        <h1>Welcome to React App</h1>
+      </header>
     </div>
   );
-}
+};
 
 export default App;
