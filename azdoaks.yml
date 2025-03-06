@@ -40,7 +40,7 @@ variables:
   tag: $(Build.BuildId)   # Tag for your image
   # tag2: ${{ parameters.image_tag }}
   # tag: ${{ parameters.image_tag }}
-  dockerFilePath: frontend/Dockerfile
+  dockerFilePath: backend/Dockerfile
   IMAGE_NAME : $(acrName).azurecr.io/$(imageName):$(tag)
   IMAGE_NAME2 : $(acrName).azurecr.io/$(imageName):$(onlyaksjob_tag)
   akscluster: aksmar06
