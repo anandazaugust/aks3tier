@@ -40,7 +40,7 @@ variables:
   dockerFilePath: frontend/Dockerfile
   IMAGE_NAME : $(acrName).azurecr.io/$(imageName):$(tag)
   IMAGE_NAME2 : $(acrName).azurecr.io/$(imageName):$(onlyaksjob_tag)
-  akscluster: aksfeb10
+  akscluster: aksmar06
   aksrg: 'rg-mylabmylabuksouthp-example'
   
       
