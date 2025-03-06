@@ -175,5 +175,5 @@ jobs:
           # kubernetesCluster: 'aksfeb08'
           kubernetesCluster: $(akscluster)
           # manifests: '$(Build.SourcesDirectory)/New folder (2)/myfrontendpod.yml'
-          manifests: ${{ manifests }}
+          manifests: ${{ parameters.manifests }}
           # imagePullSecrets: 'my1secret'
