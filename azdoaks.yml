@@ -23,6 +23,9 @@ parameters:
  - name: what_job
    type: string
    default: onlyaksjob
+ - name: manifests
+   type: string
+   default: '$(Build.SourcesDirectory)/New folder (2)/myfrontendpod.yml'
 #  - name: what_tag
 #    type: string
 #  - name: image_tag
@@ -42,6 +45,7 @@ variables:
   IMAGE_NAME2 : $(acrName).azurecr.io/$(imageName):$(onlyaksjob_tag)
   akscluster: aksmar06
   aksrg: 'rg-mylabmylabuksouthp-example'
+ 
   
       
 
@@ -170,5 +174,6 @@ jobs:
           azureResourceGroup: $(aksrg)
           # kubernetesCluster: 'aksfeb08'
           kubernetesCluster: $(akscluster)
-          manifests: '$(Build.SourcesDirectory)/New folder (2)/myfrontendpod.yml'
+          # manifests: '$(Build.SourcesDirectory)/New folder (2)/myfrontendpod.yml'
+          manifests: ${{ manifests }}
           # imagePullSecrets: 'my1secret'
