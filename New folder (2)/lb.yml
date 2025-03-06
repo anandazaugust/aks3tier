@@ -5,7 +5,7 @@ metadata:
 spec:
   type: LoadBalancer # ClusterIp, # NodePort
   selector:
-    app: myfrontendpod
+    app: frontend1
   ports: 
     - name: http
       port: 80 # Service Port
