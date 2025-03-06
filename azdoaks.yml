@@ -145,7 +145,7 @@ jobs:
           # imagePullSecrets: 'my1secret'
     
  - job: aksjob2
-   displayName: CreateAKSPOD-JOB2 
+   displayName: CreateAKSPOD-JOB2-onlyaksjob
    dependsOn: buildpushtoacrjob
    condition: ${{ eq(parameters.what_job, 'onlyaksjob' ) }}
   #  condition:  ${{ in(parameters.what_job, 'onlyaksjob', 'acrandaksjob')}}
@@ -170,5 +170,5 @@ jobs:
           azureResourceGroup: $(aksrg)
           # kubernetesCluster: 'aksfeb08'
           kubernetesCluster: $(akscluster)
-          manifests: '$(Build.SourcesDirectory)/deployment.yml'
+          manifests: '$(Build.SourcesDirectory)/New folder (2)/myfrontendpod.yml'
           # imagePullSecrets: 'my1secret'
