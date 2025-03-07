@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 
 const app = express();
-const port = 5000;
+const port = 80;
 
 // Enable CORS to allow cross-origin requests from your frontend
 app.use(cors());
