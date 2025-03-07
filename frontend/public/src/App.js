@@ -10,7 +10,7 @@ const App = () => {
   // Fetch users from the backend
   const fetchUsers = async () => {
     try {
-      const response = await axios.get('http://85.210.96.208/:80/api/users');  // API call to backend
+      const response = await axios.get('http://85.210.96.208:80/api/users');  // API call to backend
       setUsers(response.data);
       setLoading(false);  // Data fetched, set loading to false
     } catch (error) {
