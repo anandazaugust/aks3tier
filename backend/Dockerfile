@@ -14,7 +14,7 @@ RUN npm install
 COPY ./backend ./
 
 # Expose the port the app will run on (port 5000 as specified in your server.js)
-EXPOSE 5000
+EXPOSE 80
 
 # Command to run the application
 CMD ["node", "server.js"]
