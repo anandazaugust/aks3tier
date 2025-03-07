@@ -97,7 +97,7 @@ jobs:
             # scriptPath: # string. Required when scriptLocation = scriptPath. Script Path. 
         - script: |
             echo "npm installation..."
-            cd backend
+            cd frontend
             npm install
           displayName: 'installing npm'  
 
