@@ -197,6 +197,8 @@ jobs:
  - job: aksjob2
    displayName: CreateAKSPOD-JOB2-onlyaksjob
    dependsOn: buildpushtoacrjob
+   timeoutInMinutes: 10 # how long to run the job before automatically cancelling
+   cancelTimeoutInMinutes: 2 # how much time to give 'run always even if cancelled tasks' before stopping them
    condition: ${{ eq(parameters.what_job, 'onlyaksjob' ) }}
   #  condition:  ${{ in(parameters.what_job, 'onlyaksjob', 'acrandaksjob')}}
 
