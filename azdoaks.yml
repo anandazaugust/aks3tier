@@ -4,8 +4,9 @@
 # https://aka.ms/yaml
 #t
 trigger: none
-pr: none
-#totesttrigger
+# pr: none
+#totesttriggert
+
 
 pool:
   vmImage: ubuntu-latest
