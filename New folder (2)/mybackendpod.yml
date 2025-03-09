@@ -2,21 +2,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend1
+  name: backend1
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: frontend1
+      app: backend1
   template:
     metadata:
       labels:
-        app: frontend1
+        app: backend1
     spec:
       containers:
-      - name: devopspod
+      - name: backend
         # image: #{IMAGE_NAME}#
-        image: acrmar07.azurecr.io/myfrontend:1236
+        image: acrmar07.azurecr.io/mybackend:1224
       
         
         
