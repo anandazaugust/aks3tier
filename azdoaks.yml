@@ -26,6 +26,13 @@ parameters:
  - name: manifests
    type: string
    default: '$(Build.SourcesDirectory)/New folder (2)/myfrontendpod.yml'
+ - name: tier
+   type: string
+   default: 'frontend'
+   values: 
+     - frontend
+     - backend
+
 #  - name: what_tag
 #    type: string
 #  - name: image_tag
@@ -35,14 +42,17 @@ parameters:
   
 
 variables:
-  imageName: 'myapp'  # Your image name
+  imageName-frontend: 'frontend'  # Your image name
+  imageName-backend: 'backend'
   acrName: 'acrmar06'  # Your Azure Container Registry name
   tag: $(Build.BuildId)   # Tag for your image
   # tag2: ${{ parameters.image_tag }}
   # tag: ${{ parameters.image_tag }}
-  dockerFilePath: frontend/Dockerfile
-  IMAGE_NAME : $(acrName).azurecr.io/$(imageName):$(tag)
-  IMAGE_NAME2 : $(acrName).azurecr.io/$(imageName):$(onlyaksjob_tag)
+  dockerFilePath-frontend: frontend/Dockerfile
+  dockerFilePath-backend: backend/Dockerfile
+  IMAGE_NAME : $(acrName).azurecr.io/$(imageName-frontend):$(tag)
+  IMAGE_NAME3 : $(acrName).azurecr.io/$(imageName-backend):$(tag)
+  IMAGE_NAME2 : $(acrName).azurecr.io/$(imageName-backend):$(onlyaksjob_tag)
   akscluster: aksmar06
   aksrg: 'rg-mylabmylabuksouthp-example'
  
@@ -82,9 +92,9 @@ jobs:
             docker push $(acrName).azurecr.io/$(imageName):$(tag)  # Push the image to ACR
           displayName: 'Push Docker Image to ACR script'
 
- - job: onlyacrjob
-   displayName: onlyacrjob
-   condition: ${{ eq(parameters.what_job, 'onlyacrjob' ) }}
+ - job: onlyacrjobfrontend
+   displayName: onlyacrjob-frontend
+   condition:  ${{ and(in(parameters.what_job, 'onlyacrjob'), in(parameters.tier, 'frontend')) }}
    steps:
 
         - task: AzureCLI@2
@@ -103,7 +113,7 @@ jobs:
 
         - script: |
             echo "Building Docker image..."
-            docker build -f $(dockerFilePath) -t $(acrName).azurecr.io/$(imageName):$(tag) .  # Build the image and tag it
+            docker build -f $(dockerFilePath-frontend) -t $(acrName).azurecr.io/$(imageName-frontend):$(tag) .  # Build the image and tag it
           displayName: 'Build Docker Image script'
 
         - script: |
@@ -114,10 +124,46 @@ jobs:
         # Step 4: Push Docker Image to Azure Container Registry (ACR)
         - script: |
             echo "Pushing Docker image to ACR..."
-            docker push $(acrName).azurecr.io/$(imageName):$(tag)  # Push the image to ACR
+            docker push $(acrName).azurecr.io/$(imageName-frontend):$(tag)  # Push the image to ACR
           displayName: 'Push Docker Image to ACR script'
 
  
+ - job: onlyacrjobbackend
+   displayName: onlyacrjob-backend
+   condition: ${{ and(in(parameters.what_job, 'onlyacrjob'), in(parameters.tier, 'backend')) }}
+   steps:
+
+        - task: AzureCLI@2
+          displayName: login to ACR task
+          inputs:
+            azureSubscription: 'myaksfeb072025'
+            scriptType: 'bash'
+            scriptLocation: 'inlineScript'
+            inlineScript: 'az acr login --name $(acrName)'
+            # scriptPath: # string. Required when scriptLocation = scriptPath. Script Path. 
+        - script: |
+            echo "npm installation..."
+            cd backend
+            npm install
+          displayName: 'installing npm'  
+
+        - script: |
+            echo "Building Docker image..."
+            docker build -f $(dockerFilePath-backend) -t $(acrName).azurecr.io/$(imageName-backend):$(tag) .  # Build the image and tag it
+          displayName: 'Build Docker Image script'
+
+        - script: |
+            echo "show docker image..."
+            docker images
+          displayName: 'show docker images script'
+
+        # Step 4: Push Docker Image to Azure Container Registry (ACR)
+        - script: |
+            echo "Pushing Docker image to ACR..."
+            docker push $(acrName).azurecr.io/$(imageName-backend):$(tag)  # Push the image to ACR
+          displayName: 'Push Docker Image to ACR script'
+
+
  - job: aksjob1
    
    displayName: CreateAKSPOD-JOB1 
