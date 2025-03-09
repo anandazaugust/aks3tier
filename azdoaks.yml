@@ -4,7 +4,7 @@
 # https://aka.ms/yaml
 #t
 trigger: none
-# pr: none
+pr: none
 #totesttriggert
 
 
