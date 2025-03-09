@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend2
+  name: frontend3
 spec:
   replicas: 2
   selector:
@@ -15,7 +15,7 @@ spec:
       containers:
       - name: devopspod
         # image: #{IMAGE_NAME}#
-        image: aksmar09.azurecr.io/myfrontend:1244
+        image: aksmar09.azurecr.io/frontend:1244
 ...
 
 apiVersion: v1
