@@ -53,7 +53,7 @@ variables:
   IMAGE_NAME : $(acrName).azurecr.io/$(imageName-frontend):$(tag)
   IMAGE_NAME3 : $(acrName).azurecr.io/$(imageName-backend):$(tag)
   IMAGE_NAME2 : $(acrName).azurecr.io/$(imageName-backend):$(onlyaksjob_tag)
-  akscluster: aksmar06
+  akscluster: aksmar09
   aksrg: 'rg-mylabmylabuksouthp-example'
  
   
