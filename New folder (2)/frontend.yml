@@ -15,7 +15,7 @@ spec:
       containers:
       - name: devopspod
         # image: #{IMAGE_NAME}#
-        image: aksmar09.azurecr.io/myfrontend:1236
+        image: aksmar09.azurecr.io/myfrontend:1244
 ...
 
 apiVersion: v1
