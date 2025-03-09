@@ -5,6 +5,7 @@
 #t
 trigger: none
 pr: none
+#totesttrigger
 
 pool:
   vmImage: ubuntu-latest
