@@ -1,7 +1,27 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-init-script
+data:
+  init.sql: |
+    -- Create the users table
+    CREATE TABLE IF NOT EXISTS users (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      name VARCHAR(100) NOT NULL,
+      email VARCHAR(100) NOT NULL
+    );
+
+    -- Insert some initial users
+    INSERT INTO users (name, email) VALUES ('John Doe', 'john.doe@example.com');
+    INSERT INTO users (name, email) VALUES ('Jane Smith', 'jane.smith@example.com');
+    INSERT INTO users (name, email) VALUES ('Sam Green', 'sam.green@example.com');
+
+---
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: sql-deployment1
+  name: mysql-deployment
 spec:
   replicas: 1
   selector:
@@ -14,32 +34,48 @@ spec:
     spec:
       containers:
         - name: mysql
-          image: mysql # MySQL 5.7 image (or any other version)
+          image: mysql  # MySQL 5.7 image (or any other version)
           env:
             - name: MYSQL_ROOT_PASSWORD
-              value: "rootpassword"  # Hardcoded MySQL root password
+              value: "rootpassword"  # Root password for MySQL
             - name: MYSQL_DATABASE
-              value: "userdb"  # Database name to create on MySQL startup
+              value: "userdb"  # Database to create on MySQL startup
             - name: MYSQL_USER
-              value: "mysqluser"  # Username for non-root access
+              value: "mysqluser"  # Non-root user
             - name: MYSQL_PASSWORD
               value: "mysqlpassword"  # Password for the non-root user
+            - name: INIT_SQL
+              valueFrom:
+                configMapKeyRef:
+                  name: mysql-init-script  # The name of the ConfigMap
+                  key: init.sql  # The key where the SQL script is stored
           ports:
             - containerPort: 3306
+          command:
+            - "sh"
+            - "-c"
+            - |
+                # Start MySQL server
+                mysqld &
+
+                # Wait for MySQL to start (adjust the sleep time if needed)
+                sleep 10
+
+                # Run the initialization SQL script
+                echo "$INIT_SQL" | mysql -u root -p$MYSQL_ROOT_PASSWORD $MYSQL_DATABASE
+
+                # Keep the MySQL process running
+                wait
+      volumes: []
 ---
 apiVersion: v1
 kind: Service
-
 metadata:
   name: mysql-service
 spec:
-  type: LoadBalancer
   selector:
     app: mysql
   ports:
     - port: 3306
       targetPort: 3306
-
-      apiVersion: v1
-
- 
+  clusterIP: None  # Headless service for connecting to MySQL inside AKS
