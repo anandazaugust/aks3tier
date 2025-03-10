@@ -26,47 +26,42 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: mysql1
+      app: mysql
   template:
     metadata:
       labels:
-        app: mysql1
+        app: mysql
     spec:
       containers:
         - name: mysql
-          image: mysql  # MySQL 5.7 image (or any other version)
+          image: mysql:5.7
           env:
             - name: MYSQL_ROOT_PASSWORD
-              value: "rootpassword"  # Root password for MySQL
+              value: "rootpassword"
             - name: MYSQL_DATABASE
-              value: "userdb"  # Database to create on MySQL startup
+              value: "userdb"
             - name: MYSQL_USER
-              value: "mysqluser"  # Non-root user
+              value: "mysqluser"
             - name: MYSQL_PASSWORD
-              value: "mysqlpassword"  # Password for the non-root user
+              value: "mysqlpassword"
             - name: INIT_SQL
               valueFrom:
                 configMapKeyRef:
-                  name: mysql-init-script  # The name of the ConfigMap
-                  key: init.sql  # The key where the SQL script is stored
+                  name: mysql-init-script  # ConfigMap that holds the init.sql
+                  key: init.sql  # Key for the SQL script
           ports:
             - containerPort: 3306
-          command:
-            - "sh"
-            - "-c"
-            - |
-                # Start MySQL server
-                mysqld &
-
-                # Wait for MySQL to start (adjust the sleep time if needed)
-                sleep 10
-
-                # Run the initialization SQL script
-                echo "$INIT_SQL" | mysql -u root -p$MYSQL_ROOT_PASSWORD $MYSQL_DATABASE
-
-                # Keep the MySQL process running
-                wait
-      volumes: []
+          volumeMounts:
+            - name: mysql-data
+              mountPath: /var/lib/mysql  # MySQL expects to write data here
+            - name: init-script-volume
+              mountPath: /docker-entrypoint-initdb.d/
+      volumes:
+        - name: mysql-data
+          emptyDir: {}  # Temporary storage for MySQL data
+        - name: init-script-volume
+          configMap:
+            name: mysql-init-script  # Mounts the init.sql script
 ---
 apiVersion: v1
 kind: Service
@@ -78,4 +73,4 @@ spec:
   ports:
     - port: 3306
       targetPort: 3306
-  clusterIP: None  # Headless service for connecting to MySQL inside AKS
+  clusterIP: None  # Headless service
