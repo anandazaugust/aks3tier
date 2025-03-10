@@ -9,7 +9,7 @@ const App = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await axios.get('http://74.177.153.27:80/api/users');
+      const response = await axios.get('http://74.177.152.19:80/api/users');
       setUsers(response.data);
       setLoading(false);
     } catch (error) {
