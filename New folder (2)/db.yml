@@ -26,15 +26,15 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: mysql
+      app: mysql1
   template:
     metadata:
       labels:
-        app: mysql
+        app: mysql1
     spec:
       containers:
         - name: mysql
-          image: mysql:5.7
+          image: mysql
           env:
             - name: MYSQL_ROOT_PASSWORD
               value: "rootpassword"
