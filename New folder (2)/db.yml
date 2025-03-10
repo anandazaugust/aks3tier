@@ -29,12 +29,17 @@ spec:
 ---
 apiVersion: v1
 kind: Service
+
 metadata:
   name: mysql-service
 spec:
+  type: LoadBalancer
   selector:
     app: mysql
   ports:
     - port: 3306
       targetPort: 3306
-  clusterIP: None  # Headless service for connecting to MySQL inside AKS
+
+      apiVersion: v1
+
+ 
