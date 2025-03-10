@@ -25,7 +25,7 @@ const App = () => {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>Welcome to My User Dashboard</h1>
+        <h1>Welcome to Anand's Dashboard</h1>
         <p className="header-description">Check out the list of users below!</p>
       </header>
 
