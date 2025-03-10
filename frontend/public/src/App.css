@@ -7,7 +7,7 @@
 
 /* General styling */
 body {
-  font-family: 'Arial', sans-serif;
+  font-family: 'Verdana', sans-serif;  /* Use an inbuilt font (Verdana) */
   background-color: #f4f7fc;
   color: #333;
 }
