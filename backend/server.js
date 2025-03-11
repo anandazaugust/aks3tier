@@ -1,33 +1,82 @@
 const express = require('express');
 const cors = require('cors');
-const mysql = require('mysql2');  // Import MySQL client
+const mysql = require('mysql2');
 
 const app = express();
 const port = 80;
 
-// Enable CORS to allow cross-origin requests from your frontend
+// Middleware for parsing JSON
+app.use(express.json());
 app.use(cors());
 
-// Create a MySQL connection pool (use your actual database details here)
-const poolindia = mysql.createPool({
-  host: 'mysql-service',  // Service name of the MySQL pod (change if necessary)
-  user: 'mysqluser',      // Database username
-  password: 'mysqlpassword',  // Database password
-  database: 'ananddb',     // Database name
+// MySQL Database connection pool
+const pool = mysql.createPool({
+  host: 'mysql-service',  // Change to your MySQL service name in AKS
+  user: 'mysqluser',
+  password: 'mysqlpassword',
+  database: 'ananddb',
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0
 });
 
-// API endpoint to get users from MySQL
+// API endpoint to get all users
 app.get('/api/users', (req, res) => {
-  // Query to get users from the database
-  poolindia.query('SELECT * FROM users', (err, results) => {
+  pool.query('SELECT * FROM users', (err, results) => {
     if (err) {
-      console.error(err);
-      return res.status(500).json({ error: 'Failed to fetch users from database' });
+      return res.status(500).json({ error: 'Database query error' });
     }
-    res.json(results);  // Send the user data as JSON
+    res.json(results);
+  });
+});
+
+// API endpoint to add a user
+app.post('/api/users', (req, res) => {
+  const { name, email } = req.body;
+  if (!name || !email) {
+    return res.status(400).json({ error: 'Name and email are required' });
+  }
+
+  pool.query('INSERT INTO users (name, email) VALUES (?, ?)', [name, email], (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: 'Database query error' });
+    }
+    res.status(201).json({ id: results.insertId, name, email });
+  });
+});
+
+// API endpoint to update a user
+app.put('/api/users/:id', (req, res) => {
+  const { id } = req.params;
+  const { name, email } = req.body;
+
+  if (!name || !email) {
+    return res.status(400).json({ error: 'Name and email are required' });
+  }
+
+  pool.query('UPDATE users SET name = ?, email = ? WHERE id = ?', [name, email, id], (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: 'Database query error' });
+    }
+    if (results.affectedRows === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    res.json({ id, name, email });
+  });
+});
+
+// API endpoint to delete a user
+app.delete('/api/users/:id', (req, res) => {
+  const { id } = req.params;
+
+  pool.query('DELETE FROM users WHERE id = ?', [id], (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: 'Database query error' });
+    }
+    if (results.affectedRows === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    res.status(204).send();
   });
 });
 
