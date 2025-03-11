@@ -17,7 +17,7 @@ spec:
       containers:
       - name: backend
         # image: #{IMAGE_NAME}#
-        image: acrmar10.azurecr.io/backend:1273
+        image: acrmar11.azurecr.io/backend:1283
       
 ...
 
