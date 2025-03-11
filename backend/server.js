@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const mysql = require('mysql2');  // Import MySQL client
 
 const app = express();
 const port = 80;
@@ -7,16 +8,27 @@ const port = 80;
 // Enable CORS to allow cross-origin requests from your frontend
 app.use(cors());
 
-// Hardcoded user data (no database involved)
-const users = [
-  { id: 1, name: 'John Doe', email: 'john.doe@example.com' },
-  { id: 2, name: 'Jane Smith', email: 'jane.smith@example.com' },
-  { id: 3, name: 'Sam Green', email: 'sam.green@example.com' },
-];
+// Create a MySQL connection pool (use your actual database details here)
+const poolindia = mysql.createPool({
+  host: 'mysql-service',  // Service name of the MySQL pod (change if necessary)
+  user: 'mysqluser',      // Database username
+  password: 'mysqlpassword',  // Database password
+  database: 'ananddb',     // Database name
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
+});
 
-// API endpoint to get users (serving the hardcoded data)
+// API endpoint to get users from MySQL
 app.get('/api/users', (req, res) => {
-  res.json(users);  // Send the hardcoded users as a JSON response
+  // Query to get users from the database
+  poolindia.query('SELECT * FROM users', (err, results) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: 'Failed to fetch users from database' });
+    }
+    res.json(results);  // Send the user data as JSON
+  });
 });
 
 // Start the backend server
