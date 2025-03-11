@@ -147,8 +147,10 @@ jobs:
         - script: |
             echo "npm installation..."
             cd backend
+            npm install mysql2
             npm install
           displayName: 'installing npm'  
+        
 
         - script: |
             echo "Building Docker image..."
