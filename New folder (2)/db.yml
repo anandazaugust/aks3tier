@@ -39,7 +39,7 @@ spec:
             - name: MYSQL_ROOT_PASSWORD
               value: "rootpassword"
             - name: MYSQL_DATABASE
-              value: "userdb"
+              value: "ananddb"
             - name: MYSQL_USER
               value: "mysqluser"
             - name: MYSQL_PASSWORD
