@@ -32,9 +32,9 @@ parameters:
  - name: acrname
    type: string
    default: acrmar12
- - name: manifests
-   type: string
-   default: '$(Build.SourcesDirectory)/New folder (2)/myfrontendpod.yml'
+ # - name: manifests
+ #   type: string
+ #   default: '$(Build.SourcesDirectory)/New folder (2)/myfrontendpod.yml'
  - name: tier
    type: string
    default: 'frontend'
