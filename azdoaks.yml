@@ -87,7 +87,7 @@ jobs:
 
         - script: |
             echo "Building Docker image..."
-            docker build -f $(dockerFilePath) -t $(acrName).azurecr.io/$(imageName):$(tag) .  # Build the image and tag it
+            docker build -f $(dockerFilePath) -t $(pa).azurecr.io/$(imageName):$(tag) .  # Build the image and tag it
           displayName: 'Build Docker Image script'
 
         - script: |
@@ -160,7 +160,7 @@ jobs:
 
         - script: |
             echo "Building Docker image..."
-            docker build -f $(dockerFilePath-backend) -t $(acrName).azurecr.io/$(imageName-backend):$(tag) .  # Build the image and tag it
+            docker build -f $(dockerFilePath-backend) -t ${{ parameters.acrname }}.azurecr.io/$(imageName-backend):$(tag) .  # Build the image and tag it
           displayName: 'Build Docker Image script'
 
         - script: |
