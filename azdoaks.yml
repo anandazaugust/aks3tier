@@ -64,6 +64,7 @@ variables:
   IMAGE_NAME2 : $(acrName).azurecr.io/$(imageName-backend):$(onlyaksjob_tag)
   akscluster: aksmar11
   aksrg: 'rg-mylabmylabuksouthp-example'
+  manifests: '$(Build.SourcesDirectory)/New folder (2)/{{ parameters.tier }}.yml'
  
   
       
@@ -235,4 +236,5 @@ jobs:
           kubernetesCluster: ${{ parameters.akscluster }}
           # manifests: '$(Build.SourcesDirectory)/New folder (2)/myfrontendpod.yml'
           manifests: ${{ parameters.manifests }}
+          manifests: $(manifests)
           # imagePullSecrets: 'my1secret'
