@@ -26,6 +26,12 @@ parameters:
  - name: what_job
    type: string
    default: onlyaksjob
+ - name: akscluster
+   type: string
+   default: aksmar12
+ - name: acrname
+   type: string
+   default: acrmar12
  - name: manifests
    type: string
    default: '$(Build.SourcesDirectory)/New folder (2)/myfrontendpod.yml'
@@ -106,7 +112,7 @@ jobs:
             azureSubscription: 'myaksfeb072025'
             scriptType: 'bash'
             scriptLocation: 'inlineScript'
-            inlineScript: 'az acr login --name $(acrName)'
+            inlineScript: 'az acr login --name ${{ parameters.acrname }}'
             # scriptPath: # string. Required when scriptLocation = scriptPath. Script Path. 
         - script: |
             echo "npm installation..."
@@ -116,7 +122,7 @@ jobs:
 
         - script: |
             echo "Building Docker image..."
-            docker build -f $(dockerFilePath-frontend) -t $(acrName).azurecr.io/$(imageName-frontend):$(tag) .  # Build the image and tag it
+            docker build -f $(dockerFilePath-frontend) -t ${{ parameters.acrname }}.azurecr.io/$(imageName-frontend):$(tag) .  # Build the image and tag it
           displayName: 'Build Docker Image script'
 
         - script: |
@@ -127,7 +133,7 @@ jobs:
         # Step 4: Push Docker Image to Azure Container Registry (ACR)
         - script: |
             echo "Pushing Docker image to ACR..."
-            docker push $(acrName).azurecr.io/$(imageName-frontend):$(tag)  # Push the image to ACR
+            docker push ${{ parameters.acrname }}.azurecr.io/$(imageName-frontend):$(tag)  # Push the image to ACR
           displayName: 'Push Docker Image to ACR script'
 
  
@@ -142,7 +148,7 @@ jobs:
             azureSubscription: 'myaksfeb072025'
             scriptType: 'bash'
             scriptLocation: 'inlineScript'
-            inlineScript: 'az acr login --name $(acrName)'
+            inlineScript: 'az acr login --name ${{ parameters.acrname }}'
             # scriptPath: # string. Required when scriptLocation = scriptPath. Script Path. 
         - script: |
             echo "npm installation..."
@@ -165,7 +171,7 @@ jobs:
         # Step 4: Push Docker Image to Azure Container Registry (ACR)
         - script: |
             echo "Pushing Docker image to ACR..."
-            docker push $(acrName).azurecr.io/$(imageName-backend):$(tag)  # Push the image to ACR
+            docker push ${{ parameters.acrname }}.azurecr.io/$(imageName-backend):$(tag)  # Push the image to ACR
           displayName: 'Push Docker Image to ACR script'
 
 
@@ -226,7 +232,7 @@ jobs:
           # azureResourceGroup: 'rg-mylabmylabuksouthp-example'
           azureResourceGroup: $(aksrg)
           # kubernetesCluster: 'aksfeb08'
-          kubernetesCluster: $(akscluster)
+          kubernetesCluster: ${{ parameters.akscluster }}
           # manifests: '$(Build.SourcesDirectory)/New folder (2)/myfrontendpod.yml'
           manifests: ${{ parameters.manifests }}
           # imagePullSecrets: 'my1secret'
