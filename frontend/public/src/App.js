@@ -14,7 +14,7 @@ const App = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await axios.get('http://74.177.193.39/api/users');
+      const response = await axios.get('http://mybackendprivate-service:80/api/users');
       setUsers(response.data);
       setLoading(false);
     } catch (error) {
