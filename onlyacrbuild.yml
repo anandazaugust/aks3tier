@@ -53,15 +53,11 @@ jobs:
    displayName: onlyacrjob-frontend
    condition:  ${{ and(in(parameters.what_job, 'onlyacrjob'), in(parameters.tier, 'frontend')) }}
    steps:
+     
+        - script: echo Hello, world!
+          displayName: 'Run a one-line script'
 
-        - task: AzureCLI@2
-          displayName: login to ACR task
-          inputs:
-            azureSubscription: 'myaksfeb072025'
-            scriptType: 'bash'
-            scriptLocation: 'inlineScript'
-            inlineScript: 'az acr login --name ${{ parameters.acrname }}'
-          
+    
         # - script: |
         #     echo "npm installation..."
         #     cd frontend
@@ -90,7 +86,7 @@ jobs:
 
         # Publish the artifact (image tag)
         - publish: $(Build.ArtifactStagingDirectory)/image-frontend.txt
-          artifact: image-tag
+          artifact: image-tag-frontend
           displayName: 'Publish Image Tag Artifact'
 
  
@@ -99,14 +95,7 @@ jobs:
    condition: ${{ and(in(parameters.what_job, 'onlyacrjob'), in(parameters.tier, 'backend')) }}
    steps:
 
-        - task: AzureCLI@2
-          displayName: login to ACR task
-          inputs:
-            azureSubscription: 'myaksfeb072025'
-            scriptType: 'bash'
-            scriptLocation: 'inlineScript'
-            inlineScript: 'az acr login --name ${{ parameters.acrname }}'
-          
+    
      
         
 
@@ -117,5 +106,5 @@ jobs:
 
         # Publish the artifact (image tag)
         - publish: $(Build.ArtifactStagingDirectory)/image-backend.txt
-          artifact: image-tag
+          artifact: backend-image-tag
           displayName: 'Publish Image Tag Artifact'
