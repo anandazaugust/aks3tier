@@ -107,7 +107,7 @@ jobs:
           inputs:
             buildType: 'specific'
             project: '72b2d7e8-f689-474f-99ed-cb1a3749837a'
-            pipeline: '67'
+            pipeline: '66'
             buildVersionToDownload: 'latest'
             downloadType: 'single'
             downloadPath: '$(Build.ArtifactStagingDirectory)'
