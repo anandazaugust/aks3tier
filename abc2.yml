@@ -70,27 +70,27 @@ jobs:
             scriptLocation: 'inlineScript'
             inlineScript: 'az acr login --name ${{ parameters.acrname }}'
           
-        - script: |
-            echo "npm installation..."
-            cd frontend
-            npm install
-          displayName: 'installing npm'  
+        # - script: |
+        #     echo "npm installation..."
+        #     cd frontend
+        #     npm install
+        #   displayName: 'installing npm'  
 
-        - script: |
-            echo "Building Docker image..."
-            docker build -f $(dockerFilePath-frontend) -t ${{ parameters.acrname }}.azurecr.io/$(imageName-frontend):$(tag) .  # Build the image and tag it
-          displayName: 'Build Docker Image script'
+        # - script: |
+        #     echo "Building Docker image..."
+        #     docker build -f $(dockerFilePath-frontend) -t ${{ parameters.acrname }}.azurecr.io/$(imageName-frontend):$(tag) .  # Build the image and tag it
+        #   displayName: 'Build Docker Image script'
 
-        - script: |
-            echo "show docker image..."
-            docker images
-          displayName: 'show docker images script'
+        # - script: |
+        #     echo "show docker image..."
+        #     docker images
+        #   displayName: 'show docker images script'
 
 
-        - script: |
-            echo "Pushing Docker image to ACR..."
-            docker push ${{ parameters.acrname }}.azurecr.io/$(imageName-frontend):$(tag)  # Push the image to ACR
-          displayName: 'Push Docker Image to ACR script'
+        # - script: |
+        #     echo "Pushing Docker image to ACR..."
+        #     docker push ${{ parameters.acrname }}.azurecr.io/$(imageName-frontend):$(tag)  # Push the image to ACR
+        #   displayName: 'Push Docker Image to ACR script'
 
         - script: |
             echo $(Build.BuildId) > $(Build.ArtifactStagingDirectory)/image-tag.txt
@@ -103,9 +103,19 @@ jobs:
 
 
 
-    
+        - task: DownloadBuildArtifacts@1
+          inputs:
+            buildType: 'specific'
+            project: '72b2d7e8-f689-474f-99ed-cb1a3749837a'
+            pipeline: '66'
+            buildVersionToDownload: 'latest'
+            downloadType: 'single'
+            downloadPath: '$(Build.ArtifactStagingDirectory)'
 
- 
-  
+        - script: |
+            # Read the image tag from the artifact
+            IMAGE_TAG=$(cat $(Build.ArtifactStagingDirectory)/image-tag.txt)
+            echo "Using image tag: $IMAGE_TAG"
+        
 
-  
+        
