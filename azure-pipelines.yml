@@ -185,7 +185,7 @@ jobs:
           manifests: '$(Build.SourcesDirectory)/deployment.yml'
 
     
- - job: aksjobfrontend-onlyaks
+ - job: aksjobfrontend_onlyaks
    displayName: AKSJobfrontend-onlyaks
    dependsOn: buildpushtoacrjob
    timeoutInMinutes: 3 # how long to run the job before automatically cancelling
@@ -213,7 +213,7 @@ jobs:
           kubernetesCluster: ${{ parameters.akscluster }}        
           manifests: $(manifests)
        
- - job: aksjobbackend-onlyaks
+ - job: aksjobbackend_onlyaks
    displayName: AKSjobbackend-onlyaks
    dependsOn: buildpushtoacrjob
    timeoutInMinutes: 3 # how long to run the job before automatically cancelling
