@@ -1,0 +1,13 @@
+   - task: DownloadBuildArtifacts@1
+          inputs:
+            buildType: 'specific'
+            project: '72b2d7e8-f689-474f-99ed-cb1a3749837a'
+            pipeline: '66'
+            buildVersionToDownload: 'latest'
+            downloadType: 'single'
+            downloadPath: '$(Build.ArtifactStagingDirectory)'
+
+        - script: |
+            # Read the image tag from the artifact
+            IMAGE_TAG=$(cat $(Build.ArtifactStagingDirectory)/image-tag.txt)
+            echo "Using image tag: $IMAGE_TAG"
