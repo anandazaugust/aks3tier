@@ -1,1 +1,141 @@
 
+
+
+trigger: none
+pr: none
+
+
+
+pool:
+  vmImage: ubuntu-latest
+
+
+
+
+
+
+parameters:
+ - name: what_job
+   type: string
+   default: onlyaksjob
+ - name: akscluster
+   type: string
+   default: aksmar12
+ - name: acrname
+   type: string
+   default: acrmar12
+
+ - name: tier
+   type: string
+   default: 'frontend'
+   values: 
+     - frontend
+     - backend
+
+
+
+  
+
+variables:
+  imageName-frontend: 'frontend'  # Your image name
+  imageName-backend: 'backend'
+  tag: $(Build.BuildId)   # Tag for your image
+  dockerFilePath-frontend: frontend/Dockerfile
+  dockerFilePath-backend: backend/Dockerfile
+
+ 
+  
+      
+
+jobs:
+
+ - job: onlyacrjobfrontend
+   displayName: onlyacrjob-frontend
+   condition:  ${{ and(in(parameters.what_job, 'onlyacrjob'), in(parameters.tier, 'frontend')) }}
+   steps:
+
+        - task: AzureCLI@2
+          displayName: login to ACR task
+          inputs:
+            azureSubscription: 'myaksfeb072025'
+            scriptType: 'bash'
+            scriptLocation: 'inlineScript'
+            inlineScript: 'az acr login --name ${{ parameters.acrname }}'
+          
+        # - script: |
+        #     echo "npm installation..."
+        #     cd frontend
+        #     npm install
+        #   displayName: 'installing npm'  
+
+        # - script: |
+        #     echo "Building Docker image..."
+        #     docker build -f $(dockerFilePath-frontend) -t ${{ parameters.acrname }}.azurecr.io/$(imageName-frontend):$(tag) .  # Build the image and tag it
+        #   displayName: 'Build Docker Image script'
+
+        # - script: |
+        #     echo "show docker image..."
+        #     docker images
+        #   displayName: 'show docker images script'
+
+
+        # - script: |
+        #     echo "Pushing Docker image to ACR..."
+        #     docker push ${{ parameters.acrname }}.azurecr.io/$(imageName-frontend):$(tag)  # Push the image to ACR
+        #   displayName: 'Push Docker Image to ACR script'
+
+        - script: |
+            echo $(Build.BuildId) > $(Build.ArtifactStagingDirectory)/image-frontend.txt
+          displayName: 'Save Image Tag to Artifact'
+
+        # Publish the artifact (image tag)
+        - publish: $(Build.ArtifactStagingDirectory)/image-frontend.txt
+          artifact: image-tag
+          displayName: 'Publish Image Tag Artifact'
+
+ 
+ - job: onlyacrjobbackend
+   displayName: onlyacrjob-backend
+   condition: ${{ and(in(parameters.what_job, 'onlyacrjob'), in(parameters.tier, 'backend')) }}
+   steps:
+
+        - task: AzureCLI@2
+          displayName: login to ACR task
+          inputs:
+            azureSubscription: 'myaksfeb072025'
+            scriptType: 'bash'
+            scriptLocation: 'inlineScript'
+            inlineScript: 'az acr login --name ${{ parameters.acrname }}'
+          
+        # - script: |
+        #     echo "npm installation..."
+        #     cd backend
+        #     npm install mysql2
+        #     npm install
+        #   displayName: 'installing npm'  
+        
+
+        # - script: |
+        #     echo "Building Docker image..."
+        #     docker build -f $(dockerFilePath-backend) -t ${{ parameters.acrname }}.azurecr.io/$(imageName-backend):$(tag) .  # Build the image and tag it
+        #   displayName: 'Build Docker Image script'
+
+        # - script: |
+        #     echo "show docker image..."
+        #     docker images
+        #   displayName: 'show docker images script'
+
+     
+        # - script: |
+        #     echo "Pushing Docker image to ACR..."
+        #     docker push ${{ parameters.acrname }}.azurecr.io/$(imageName-backend):$(tag)  # Push the image to ACR
+        #   displayName: 'Push Docker Image to ACR script'
+
+         - script: |
+            echo $(Build.BuildId) > $(Build.ArtifactStagingDirectory)/image-backend.txt
+          displayName: 'Save Image Tag to Artifact'
+
+        # Publish the artifact (image tag)
+        - publish: $(Build.ArtifactStagingDirectory)/image-backend.txt
+          artifact: image-tag
+          displayName: 'Publish Image Tag Artifact'
