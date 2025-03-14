@@ -87,6 +87,26 @@ jobs:
          
                docker tag ${{ parameters.acrname }}.azurecr.io/$(imageName-frontend):$(tag) ${{ parameters.acrname }}.azurecr.io/$(imageName-frontend):latest
                docker push ${{ parameters.acrname }}.azurecr.io/$(imageName-frontend):latest
+
+        - task: AzureCLI@2
+          inputs:
+            azureSubscription: 'myaksfeb072025'
+            scriptType: 'bash'
+            scriptLocation: 'inlineScript'
+            inlineScript: |
+              # Variables for the Azure Storage Account and File Share
+              storageAccountName='csa1003200222a86add '  # Replace with your storage account name
+              fileShareName='frontend'  # Replace with your file share name
+              filePath='$(Build.ArtifactStagingDirectory)/frontend.txt'  # Path to store Build ID in your pipeline workspace
+              buildId=$(Build.BuildId)
+              
+              # Create a text file containing the Build ID
+              echo $buildId > $filePath
+              
+              # Upload the file to the Azure File Share using azcopy
+              az storage file upload --account-name $storageAccountName --share-name $fileShareName --source $filePath --path "goli1.txt"
+          displayName: 'Publish Build ID to Azure File Share'
+                
  
  - job: onlyacrjobbackend
    displayName: onlyacrjob-backend
