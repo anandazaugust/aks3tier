@@ -125,6 +125,15 @@ jobs:
             docker push ${{ parameters.acrname }}.azurecr.io/$(imageName-backend):$(tag)  # Push the image to ACR
           displayName: 'Push Docker Image to ACR script'
 
+        - script: |
+               docker tag ${{ parameters.acrname }}.azurecr.io/$(imageName-backend):$(tag) ${{ parameters.acrname }}.azurecr.io/$(imageName-backend):latest
+               docker push ${{ parameters.acrname }}.azurecr.io/$(imageName-backend):latest
+           displayName: tagging as latest and with buildid
+
+        - script: |
+             echo "show docker image..."
+            docker images
+          displayName: 'show docker images script'
 
  # - job: aksjob1
    
