@@ -41,7 +41,7 @@ variables:
   IMAGE_NAME_backend : $(acrName).azurecr.io/$(imageName-backend):${{ parameters.tag }}
   akscluster: aksmar14
   aksrg: 'rg-mylabmylabuksouthp-example'
-  manifests: '$(Build.SourcesDirectory)/New folder (2)/${{ parameters.tier }}.yml'
+  manifests: '$(Build.SourcesDirectory)/abcno/${{ parameters.tier }}.yml'
 
 jobs: 
 
