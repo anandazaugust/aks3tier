@@ -16,6 +16,9 @@ parameters:
  - name: akscluster
    type: string
    default: aksmar14
+ - name: tag
+   type: string
+   default: latest
 
 
  - name: tier
@@ -56,7 +59,7 @@ variables:
         kubeloginVersion: 'latest'
       displayName: installkubelogin
     - script: |
-            sed -i "s|#{IMAGE_NAME}#|$(IMAGE_NAME_frontend)|g" {{ parameters.tier }}.yml
+            sed -i "s|#{IMAGE_NAME}#|$(IMAGE_NAME_frontend)|g" $(manifests)
       displayName: 'Replace Image Name in Manifest'
       
 
