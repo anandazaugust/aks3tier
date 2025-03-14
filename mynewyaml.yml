@@ -132,7 +132,7 @@ jobs:
 
         - script: |
              echo "show docker image..."
-            docker images
+             docker images
           displayName: 'show docker images script'
 
  # - job: aksjob1
