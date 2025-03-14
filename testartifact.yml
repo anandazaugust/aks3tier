@@ -22,15 +22,15 @@ jobs:
            pipeline: '67'
            buildVersionToDownload: 'latest'
            downloadType: 'single'
-           downloadPath: '$(Build.ArtifactStagingDirectory)/frontend'
-           artifactName: image-tag-frontend
+           downloadPath: '$(Build.ArtifactStagingDirectory)/backend'
+           artifactName: image-tag-backend
 
     
        - script: |
                 # Read the image tag from the artifact
                 IMAGE_TAG=$(cat $(Build.ArtifactStagingDirectory)/frontend/image-frontend.txt)
                 echo "Using image tag: $IMAGE_TAG"
-      #  - script: |
-      #           # Read the image tag from the artifact
-      #           IMAGE_TAG2=$(cat $(Build.ArtifactStagingDirectory)/image-backend.txt)
-      #           echo "Using image tag: $IMAGE_TAG2"
+       - script: |
+                # Read the image tag from the artifact
+                IMAGE_TAG2=$(cat $(Build.ArtifactStagingDirectory)/backend/image-backend.txt)
+                echo "Using image tag: $IMAGE_TAG2"
