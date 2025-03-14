@@ -90,7 +90,7 @@ jobs:
  
  - job: onlyacrjobbackend
    displayName: onlyacrjob-backend
-   condition: ${{ and(in(parameters.what_job, 'onlyacrjob'), in(parameters.tier, 'backend')) }}
+   condition: ${{ eq(parameters.tier, 'backend' ) }}
    steps:
 
         - task: AzureCLI@2
@@ -126,85 +126,85 @@ jobs:
           displayName: 'Push Docker Image to ACR script'
 
 
- - job: aksjob1
+ # - job: aksjob1
    
-   displayName: CreateAKSPOD-JOB1 
-   dependsOn: buildpushtoacrjob
-   condition:  ${{ in(parameters.what_job, 'acrandaksjob')}}
+ #   displayName: CreateAKSPOD-JOB1 
+ #   dependsOn: buildpushtoacrjob
+ #   condition:  ${{ in(parameters.what_job, 'acrandaksjob')}}
 
-   steps:
-    - task: KubeloginInstaller@0
-      inputs:
-        kubeloginVersion: 'latest'
-      displayName: installkubelogin
-    - script: |
-            sed -i "s|#{IMAGE_NAME}#|$(IMAGE_NAME)|g" deployaks.yaml
-      displayName: 'Replace Image Name in Manifest'
+ #   steps:
+ #    - task: KubeloginInstaller@0
+ #      inputs:
+ #        kubeloginVersion: 'latest'
+ #      displayName: installkubelogin
+ #    - script: |
+ #            sed -i "s|#{IMAGE_NAME}#|$(IMAGE_NAME)|g" deployaks.yaml
+ #      displayName: 'Replace Image Name in Manifest'
       
 
-    - task: KubernetesManifest@1
-      displayName: DeployAKSPOD
-      inputs:
-          action: 'deploy'
-          connectionType: 'azureResourceManager'
-          azureSubscriptionConnection: 'myaksfeb072025'
-          azureResourceGroup: $(aksrg)
-          kubernetesCluster: $(akscluster)
-          manifests: '$(Build.SourcesDirectory)/deployment.yml'
+ #    - task: KubernetesManifest@1
+ #      displayName: DeployAKSPOD
+ #      inputs:
+ #          action: 'deploy'
+ #          connectionType: 'azureResourceManager'
+ #          azureSubscriptionConnection: 'myaksfeb072025'
+ #          azureResourceGroup: $(aksrg)
+ #          kubernetesCluster: $(akscluster)
+ #          manifests: '$(Build.SourcesDirectory)/deployment.yml'
 
     
- - job: aksjobfrontend_onlyaks
-   displayName: AKSJobfrontend-onlyaks
-   dependsOn: buildpushtoacrjob
-   timeoutInMinutes: 3 # how long to run the job before automatically cancelling
-   cancelTimeoutInMinutes: 2 # how much time to give 'run always even if cancelled tasks' before stopping them
-   condition:  ${{ and(in(parameters.what_job, 'onlyaksjob'), in(parameters.tier, 'frontend')) }}
+ # - job: aksjobfrontend_onlyaks
+ #   displayName: AKSJobfrontend-onlyaks
+ #   dependsOn: buildpushtoacrjob
+ #   timeoutInMinutes: 3 # how long to run the job before automatically cancelling
+ #   cancelTimeoutInMinutes: 2 # how much time to give 'run always even if cancelled tasks' before stopping them
+ #   condition:  ${{ and(in(parameters.what_job, 'onlyaksjob'), in(parameters.tier, 'frontend')) }}
   
 
-   steps:
-    - task: KubeloginInstaller@0
-      inputs:
-        kubeloginVersion: 'latest'
-      displayName: installkubelogin
-    - script: |
-            sed -i "s|#{IMAGE_NAME}#|$(IMAGE_NAME_frontend)|g" {{ parameters.tier }}.yml
-      displayName: 'Replace Image Name in Manifest'
+ #   steps:
+ #    - task: KubeloginInstaller@0
+ #      inputs:
+ #        kubeloginVersion: 'latest'
+ #      displayName: installkubelogin
+ #    - script: |
+ #            sed -i "s|#{IMAGE_NAME}#|$(IMAGE_NAME_frontend)|g" {{ parameters.tier }}.yml
+ #      displayName: 'Replace Image Name in Manifest'
       
 
-    - task: KubernetesManifest@1
-      displayName: DeployAKSPOD
-      inputs:
-          action: 'deploy'
-          connectionType: 'azureResourceManager'
-          azureSubscriptionConnection: 'myaksfeb072025'
-          azureResourceGroup: $(aksrg)        
-          kubernetesCluster: ${{ parameters.akscluster }}        
-          manifests: $(manifests)
+ #    - task: KubernetesManifest@1
+ #      displayName: DeployAKSPOD
+ #      inputs:
+ #          action: 'deploy'
+ #          connectionType: 'azureResourceManager'
+ #          azureSubscriptionConnection: 'myaksfeb072025'
+ #          azureResourceGroup: $(aksrg)        
+ #          kubernetesCluster: ${{ parameters.akscluster }}        
+ #          manifests: $(manifests)
        
- - job: aksjobbackend_onlyaks
-   displayName: AKSjobbackend-onlyaks
-   dependsOn: buildpushtoacrjob
-   timeoutInMinutes: 3 # how long to run the job before automatically cancelling
-   cancelTimeoutInMinutes: 2 # how much time to give 'run always even if cancelled tasks' before stopping them
-   condition:  ${{ and(in(parameters.what_job, 'onlyaksjob'), in(parameters.tier, 'backend')) }}
+ # - job: aksjobbackend_onlyaks
+ #   displayName: AKSjobbackend-onlyaks
+ #   dependsOn: buildpushtoacrjob
+ #   timeoutInMinutes: 3 # how long to run the job before automatically cancelling
+ #   cancelTimeoutInMinutes: 2 # how much time to give 'run always even if cancelled tasks' before stopping them
+ #   condition:  ${{ and(in(parameters.what_job, 'onlyaksjob'), in(parameters.tier, 'backend')) }}
   
 
-   steps:
-    - task: KubeloginInstaller@0
-      inputs:
-        kubeloginVersion: 'latest'
-      displayName: installkubelogin
-    - script: |
-            sed -i "s|#{IMAGE_NAME}#|$(IMAGE_NAME_backend)|g" {{ parameters.tier }}.yml
-      displayName: 'Replace Image Name in Manifest'
+ #   steps:
+ #    - task: KubeloginInstaller@0
+ #      inputs:
+ #        kubeloginVersion: 'latest'
+ #      displayName: installkubelogin
+ #    - script: |
+ #            sed -i "s|#{IMAGE_NAME}#|$(IMAGE_NAME_backend)|g" {{ parameters.tier }}.yml
+ #      displayName: 'Replace Image Name in Manifest'
       
 
-    - task: KubernetesManifest@1
-      displayName: DeployAKSPOD
-      inputs:
-          action: 'deploy'
-          connectionType: 'azureResourceManager'
-          azureSubscriptionConnection: 'myaksfeb072025'
-          azureResourceGroup: $(aksrg)        
-          kubernetesCluster: ${{ parameters.akscluster }}        
-          manifests: $(manifests)
+ #    - task: KubernetesManifest@1
+ #      displayName: DeployAKSPOD
+ #      inputs:
+ #          action: 'deploy'
+ #          connectionType: 'azureResourceManager'
+ #          azureSubscriptionConnection: 'myaksfeb072025'
+ #          azureResourceGroup: $(aksrg)        
+ #          kubernetesCluster: ${{ parameters.akscluster }}        
+ #          manifests: $(manifests)
