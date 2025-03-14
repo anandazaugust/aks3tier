@@ -28,7 +28,7 @@ jobs:
     
        - script: |
                 # Read the image tag from the artifact
-                IMAGE_TAG=$(cat $(Build.ArtifactStagingDirectory)/image-frontend.txt)
+                IMAGE_TAG=$(cat $(Build.ArtifactStagingDirectory)/frontend/image-frontend.txt)
                 echo "Using image tag: $IMAGE_TAG"
       #  - script: |
       #           # Read the image tag from the artifact
