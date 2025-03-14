@@ -37,8 +37,8 @@ variables:
 
   dockerFilePath-frontend: frontend/Dockerfile
   dockerFilePath-backend: backend/Dockerfile
-  IMAGE_NAME_frontend : $(acrName).azurecr.io/$(imageName-frontend):{{ parameters.tag }}
-  IMAGE_NAME_backend : $(acrName).azurecr.io/$(imageName-backend):{{ parameters.tag }}
+  IMAGE_NAME_frontend : $(acrName).azurecr.io/$(imageName-frontend):${{ parameters.tag }}
+  IMAGE_NAME_backend : $(acrName).azurecr.io/$(imageName-backend):${{ parameters.tag }}
   akscluster: aksmar14
   aksrg: 'rg-mylabmylabuksouthp-example'
   manifests: '$(Build.SourcesDirectory)/New folder (2)/${{ parameters.tier }}.yml'
