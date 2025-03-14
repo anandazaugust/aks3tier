@@ -128,7 +128,7 @@ jobs:
         - script: |
                docker tag ${{ parameters.acrname }}.azurecr.io/$(imageName-backend):$(tag) ${{ parameters.acrname }}.azurecr.io/$(imageName-backend):latest
                docker push ${{ parameters.acrname }}.azurecr.io/$(imageName-backend):latest
-           displayName: tagging as latest and with buildid
+          displayName: tagging as latest and with buildid
 
         - script: |
              echo "show docker image..."
