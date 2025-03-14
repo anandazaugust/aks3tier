@@ -1,1 +1,97 @@
 
+trigger: none
+pr: none
+
+
+
+pool:
+  vmImage: ubuntu-latest
+
+
+
+parameters:
+ - name: what_job
+   type: string
+   default: onlyaksjob
+ - name: akscluster
+   type: string
+   default: aksmar14
+
+
+ - name: tier
+   type: string
+   default: 'frontend'
+   values: 
+     - frontend
+     - backend
+
+
+  
+
+variables:
+  imageName-frontend: 'frontend'  # Your image name
+  imageName-backend: 'backend'
+
+
+  dockerFilePath-frontend: frontend/Dockerfile
+  dockerFilePath-backend: backend/Dockerfile
+  IMAGE_NAME_frontend : $(acrName).azurecr.io/$(imageName-frontend):{{ parameters.tag }}
+  IMAGE_NAME_backend : $(acrName).azurecr.io/$(imageName-backend):{{ parameters.tag }}
+  akscluster: aksmar14
+  aksrg: 'rg-mylabmylabuksouthp-example'
+  manifests: '$(Build.SourcesDirectory)/New folder (2)/${{ parameters.tier }}.yml'
+
+
+
+- job: aksjobfrontend_onlyaks
+   displayName: AKSJobfrontend-onlyaks
+   timeoutInMinutes: 3 # how long to run the job before automatically cancelling
+   cancelTimeoutInMinutes: 2 # how much time to give 'run always even if cancelled tasks' before stopping them
+   condition:   ${{ eq(parameters.tier, 'frontend' ) }}
+  
+
+   steps:
+    - task: KubeloginInstaller@0
+      inputs:
+        kubeloginVersion: 'latest'
+      displayName: installkubelogin
+    - script: |
+            sed -i "s|#{IMAGE_NAME}#|$(IMAGE_NAME_frontend)|g" {{ parameters.tier }}.yml
+      displayName: 'Replace Image Name in Manifest'
+      
+
+    - task: KubernetesManifest@1
+      displayName: DeployAKSPOD
+      inputs:
+          action: 'deploy'
+          connectionType: 'azureResourceManager'
+          azureSubscriptionConnection: 'myaksfeb072025'
+          azureResourceGroup: $(aksrg)        
+          kubernetesCluster: ${{ parameters.akscluster }}        
+          manifests: $(manifests)
+       
+ - job: aksjobbackend_onlyaks
+   displayName: AKSjobbackend-onlyaks
+   dependsOn: buildpushtoacrjob
+   timeoutInMinutes: 3 # how long to run the job before automatically cancelling
+   cancelTimeoutInMinutes: 2 # how much time to give 'run always even if cancelled tasks' before stopping them
+   condition:  ${{ eq(parameters.tier, 'backend' ) }}
+  
+
+   steps:
+    - task: KubeloginInstaller@0
+      inputs:
+        kubeloginVersion: 'latest'
+      displayName: installkubelogin
+    - script: |
+            sed -i "s|#{IMAGE_NAME}#|$(IMAGE_NAME_backend)|g" {{ parameters.tier }}.yml
+      displayName: 'Replace Image Name in Manifest'
+    - task: KubernetesManifest@1
+      displayName: DeployAKSPOD
+      inputs:
+          action: 'deploy'
+          connectionType: 'azureResourceManager'
+          azureSubscriptionConnection: 'myaksfeb072025'
+          azureResourceGroup: $(aksrg)        
+          kubernetesCluster: ${{ parameters.akscluster }}        
+          manifests: $(manifests)
