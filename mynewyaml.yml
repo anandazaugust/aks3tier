@@ -14,7 +14,7 @@ pool:
 
 
 parameters:
-=
+
 
  - name: acrname
    type: string
