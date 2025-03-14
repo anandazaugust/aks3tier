@@ -23,7 +23,7 @@ jobs:
            buildVersionToDownload: 'latest'
            downloadType: 'single'
            downloadPath: '$(Build.ArtifactStagingDirectory)/backend'
-           artifactName: image-tag-backend
+           artifactName: backend-image-tag
 
     
        - script: |
