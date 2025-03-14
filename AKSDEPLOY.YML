@@ -10,9 +10,7 @@ pool:
 
 
 parameters:
- - name: what_job
-   type: string
-   default: onlyaksjob
+
  - name: akscluster
    type: string
    default: aksmar14
