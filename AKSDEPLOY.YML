@@ -13,7 +13,7 @@ parameters:
 
  - name: akscluster
    type: string
-   default: aksmar14
+   default: aksmar16
  - name: tag
    type: string
    default: latest
@@ -32,14 +32,14 @@ parameters:
 variables:
   imageName-frontend: 'frontend'  # Your image name
   imageName-backend: 'backend'
-  acrName: acrmar14
+  acrName: acrmar16
 
 
   dockerFilePath-frontend: frontend/Dockerfile
   dockerFilePath-backend: backend/Dockerfile
   IMAGE_NAME_frontend : $(acrName).azurecr.io/$(imageName-frontend):${{ parameters.tag }}
   IMAGE_NAME_backend : $(acrName).azurecr.io/$(imageName-backend):${{ parameters.tag }}
-  akscluster: aksmar14
+  akscluster: aksmar16
   aksrg: 'rg-mylabmylabuksouthp-example'
   manifests: '$(Build.SourcesDirectory)/abcno/${{ parameters.tier }}.yml'
 
