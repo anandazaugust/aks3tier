@@ -88,7 +88,10 @@ jobs:
                docker tag ${{ parameters.acrname }}.azurecr.io/$(imageName-frontend):$(tag) ${{ parameters.acrname }}.azurecr.io/$(imageName-frontend):latest
                docker push ${{ parameters.acrname }}.azurecr.io/$(imageName-frontend):latest
 
-                
+        - script: |
+              echo "show docker image..."
+              docker images
+          displayName: 'show docker images script'    
  
  - job: onlyacrjobbackend
    displayName: onlyacrjob-backend
