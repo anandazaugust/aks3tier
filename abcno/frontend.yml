@@ -7,17 +7,17 @@ metadata:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend3
+  name: frontend4
   namespace: frontend
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: frontend1
+      app: frontend2
   template:
     metadata:
       labels:
-        app: frontend1
+        app: frontend2
     spec:
       containers:
       - name: devopspod
@@ -32,7 +32,7 @@ metadata:
 spec:
   type: LoadBalancer # ClusterIp, # NodePort
   selector:
-    app: frontend1
+    app: frontend2
   ports: 
     - name: http
       port: 80 # Service Port
