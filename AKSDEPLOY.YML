@@ -90,9 +90,10 @@ jobs:
       - task: KubernetesManifest@1
         displayName: DeployAKSPOD
         inputs:
-            action: 'deploy'
-            connectionType: 'azureResourceManager'
-            azureSubscriptionConnection: 'myaksfeb072025'
-            azureResourceGroup: $(aksrg)        
-            kubernetesCluster: ${{ parameters.akscluster }}        
-            manifests: $(manifests)
+          action: 'deploy'
+          connectionType: 'azureResourceManager'
+          azureSubscriptionConnection: 'myaksfeb072025'
+          azureResourceGroup: '$(aksrg)'
+          kubernetesCluster: '${{ parameters.akscluster }}'
+          namespace: ${{ parameters.tier }}
+          manifests: '$(manifests)'
