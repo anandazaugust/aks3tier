@@ -13,7 +13,7 @@ parameters:
 
  - name: akscluster
    type: string
-   default: aksmar16
+   default: aksmar17
  - name: tag
    type: string
    default: latest
@@ -32,14 +32,14 @@ parameters:
 variables:
   imageName-frontend: 'frontend'  # Your image name
   imageName-backend: 'backend'
-  acrName: acrmar16
+  acrName: acrmar17
 
 
   dockerFilePath-frontend: frontend/Dockerfile
   dockerFilePath-backend: backend/Dockerfile
   IMAGE_NAME_frontend : $(acrName).azurecr.io/$(imageName-frontend):${{ parameters.tag }}
   IMAGE_NAME_backend : $(acrName).azurecr.io/$(imageName-backend):${{ parameters.tag }}
-  akscluster: aksmar16
+  akscluster: aksmar17
   aksrg: 'rg-mylabmylabuksouthp-example'
   manifests: '$(Build.SourcesDirectory)/abcno/${{ parameters.tier }}.yml'
 
@@ -57,6 +57,13 @@ jobs:
         inputs:
           kubeloginVersion: 'latest'
         displayName: installkubelogin
+      
+      - task: AzureCLI@2
+        inputs:
+          azureSubscription: 'myaksfeb072025'
+          scriptType: 'bash'
+          scriptLocation: 'inlineScript'
+          inlineScript: 'kubectl create namespace frontend'
       - script: |
               sed -i "s|#{IMAGE_NAME}#|$(IMAGE_NAME_frontend)|g" $(manifests)
         displayName: 'Replace Image Name in Manifest'
