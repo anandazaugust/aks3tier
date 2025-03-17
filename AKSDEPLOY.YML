@@ -103,11 +103,10 @@ jobs:
           scriptType: 'bash'
           scriptLocation: 'inlineScript'
         displayName: createnamespacescript
-          inlineScript: |
-           
-            az aks get-credentials --resource-group rg-mylabmylabuksouthp-example --name aksmar17
-            kubelogin convert-kubeconfig -l azurecli
-            kubectl create namespace backend
+          inlineScript:|
+              az aks get-credentials --resource-group rg-mylabmylabuksouthp-example --name aksmar17
+              kubelogin convert-kubeconfig -l azurecli
+              kubectl create namespace backend
       - script: |
               sed -i "s|#{IMAGE_NAME}#|$(IMAGE_NAME_backend)|g" {{ parameters.tier }}.yml
         displayName: 'Replace Image Name in Manifest'
