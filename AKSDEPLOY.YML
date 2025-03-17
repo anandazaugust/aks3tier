@@ -25,6 +25,7 @@ parameters:
    values: 
      - frontend
      - backend
+     - db
 
 
   
