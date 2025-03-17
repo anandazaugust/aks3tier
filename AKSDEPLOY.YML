@@ -98,12 +98,13 @@ jobs:
         displayName: installkubelogin
 
       - task: AzureCLI@2
+        displayName: "createnamespacescript"
         inputs:
           azureSubscription: 'myaksfeb072025'
           scriptType: 'bash'
           scriptLocation: 'inlineScript'
-        displayName: createnamespacescript
-          inlineScript:|
+    
+          inlineScript: |
               az aks get-credentials --resource-group rg-mylabmylabuksouthp-example --name aksmar17
               kubelogin convert-kubeconfig -l azurecli
               kubectl create namespace backend
