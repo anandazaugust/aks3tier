@@ -66,7 +66,7 @@ jobs:
           inlineScript: |
            
             az aks get-credentials --resource-group rg-mylabmylabuksouthp-example --name aksmar17
-            'kubectl create namespace frontend'
+            kubectl create namespace frontend
       - script: |
               sed -i "s|#{IMAGE_NAME}#|$(IMAGE_NAME_frontend)|g" $(manifests)
         displayName: 'Replace Image Name in Manifest'
