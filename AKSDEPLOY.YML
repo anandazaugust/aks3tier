@@ -50,7 +50,7 @@ jobs:
     displayName: AKSJobfrontend-onlyaks
     timeoutInMinutes: 3 # how long to run the job before automatically cancelling
     cancelTimeoutInMinutes: 2 # how much time to give 'run always even if cancelled tasks' before stopping them
-    # condition:   ${{ eq(parameters.tier, 'frontend' ) }}
+    condition:   ${{ ne(parameters.tier, 'db' ) }}
     
 
     steps:
