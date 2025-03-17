@@ -67,11 +67,11 @@ jobs:
            
             az aks get-credentials --resource-group rg-mylabmylabuksouthp-example --name aksmar17
             kubelogin convert-kubeconfig -l azurecli
-             if ! kubectl get namespace backend; then
-              echo "Namespace 'backend' does not exist. Creating it now..."
-              kubectl create namespace backend
+             if ! kubectl get namespace frontend; then
+              echo "Namespace 'frontend' does not exist. Creating it now..."
+              kubectl create namespace frontend
              else
-              echo "Namespace 'backend' already exists. Skipping creation."
+              echo "Namespace 'frontend' already exists. Skipping creation."
              fi
       - script: |
               sed -i "s|#{IMAGE_NAME}#|$(IMAGE_NAME_frontend)|g" $(manifests)
@@ -112,7 +112,12 @@ jobs:
           inlineScript: |
               az aks get-credentials --resource-group rg-mylabmylabuksouthp-example --name aksmar17
               kubelogin convert-kubeconfig -l azurecli
+               if ! kubectl get namespace backend; then
+              echo "Namespace 'backend' does not exist. Creating it now..."
               kubectl create namespace backend
+                else
+              echo "Namespace 'backend' already exists. Skipping creation."
+              fi
       - script: |
               sed -i "s|#{IMAGE_NAME}#|$(IMAGE_NAME_backend)|g" ${{ parameters.tier }}.yml
         displayName: 'Replace Image Name in Manifest'
