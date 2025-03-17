@@ -66,6 +66,7 @@ jobs:
           inlineScript: |
            
             az aks get-credentials --resource-group rg-mylabmylabuksouthp-example --name aksmar17
+            kubelogin convert-kubeconfig -l azurecli
             kubectl create namespace frontend
       - script: |
               sed -i "s|#{IMAGE_NAME}#|$(IMAGE_NAME_frontend)|g" $(manifests)
