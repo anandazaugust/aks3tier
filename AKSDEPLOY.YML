@@ -38,8 +38,8 @@ variables:
 
   dockerFilePath-frontend: frontend/Dockerfile
   dockerFilePath-backend: backend/Dockerfile
-  IMAGE_NAME_frontend : $(acrName).azurecr.io/$(imageName-frontend):${{ parameters.tag }}
-  IMAGE_NAME_backend : $(acrName).azurecr.io/$(imageName-backend):${{ parameters.tag }}
+  IMAGE_NAME: $(acrName).azurecr.io/${{ parameters.tier }}:${{ parameters.tag }}
+  # IMAGE_NAME_backend : $(acrName).azurecr.io/$(imageName-backend):${{ parameters.tag }}
   akscluster: aksmar17
   aksrg: 'rg-mylabmylabuksouthp-example'
   manifests: '$(Build.SourcesDirectory)/abcno/${{ parameters.tier }}.yml'
@@ -50,7 +50,7 @@ jobs:
     displayName: AKSJobfrontend-onlyaks
     timeoutInMinutes: 3 # how long to run the job before automatically cancelling
     cancelTimeoutInMinutes: 2 # how much time to give 'run always even if cancelled tasks' before stopping them
-    condition:   ${{ eq(parameters.tier, 'frontend' ) }}
+    # condition:   ${{ eq(parameters.tier, 'frontend' ) }}
     
 
     steps:
@@ -68,14 +68,14 @@ jobs:
            
             az aks get-credentials --resource-group rg-mylabmylabuksouthp-example --name aksmar17
             kubelogin convert-kubeconfig -l azurecli
-             if ! kubectl get namespace frontend; then
-              echo "Namespace 'frontend' does not exist. Creating it now..."
-              kubectl create namespace frontend
+             if ! kubectl get namespace ${{ parameters.tier }}; then
+              echo "Namespace '${{ parameters.tier }}' does not exist. Creating it now..."
+              kubectl create namespace ${{ parameters.tier }}
              else
-              echo "Namespace 'frontend' already exists. Skipping creation."
+              echo "Namespace '${{ parameters.tier }}' already exists. Skipping creation."
              fi
       - script: |
-              sed -i "s|#{IMAGE_NAME}#|$(IMAGE_NAME_frontend)|g" $(manifests)
+              sed -i "s|#{IMAGE_NAME}#|$(IMAGE_NAME)|g" $(manifests)
         displayName: 'Replace Image Name in Manifest'
         
 
@@ -90,45 +90,46 @@ jobs:
           namespace: '${{ parameters.tier }}'
           manifests: '$(manifests)'
         
-  - job: aksjobbackend_onlyaks
-    displayName: AKSjobbackend-onlyaks
-    timeoutInMinutes: 3 # how long to run the job before automatically cancelling
-    cancelTimeoutInMinutes: 2 # how much time to give 'run always even if cancelled tasks' before stopping them
-    condition:  ${{ eq(parameters.tier, 'backend' ) }}
+  # - job: aksjobbackend_onlyaks
+  #   displayName: AKSjobbackend-onlyaks
+  #   timeoutInMinutes: 3 # how long to run the job before automatically cancelling
+  #   cancelTimeoutInMinutes: 2 # how much time to give 'run always even if cancelled tasks' before stopping them
+  #   condition:  ${{ eq(parameters.tier, 'backend' ) }}
     
 
-    steps:
-      - task: KubeloginInstaller@0
-        inputs:
-          kubeloginVersion: 'latest'
-        displayName: installkubelogin
+  #   steps:
+  #     - task: KubeloginInstaller@0
+  #       inputs:
+  #         kubeloginVersion: 'latest'
+  #       displayName: installkubelogin
 
-      - task: AzureCLI@2
-        displayName: "createnamespacescript"
-        inputs:
-          azureSubscription: 'myaksfeb072025'
-          scriptType: 'bash'
-          scriptLocation: 'inlineScript'
+  #     - task: AzureCLI@2
+        
+  #       displayName: "createnamespacescript"
+  #       inputs:
+  #         azureSubscription: 'myaksfeb072025'
+  #         scriptType: 'bash'
+  #         scriptLocation: 'inlineScript'
     
-          inlineScript: |
-              az aks get-credentials --resource-group rg-mylabmylabuksouthp-example --name aksmar17
-              kubelogin convert-kubeconfig -l azurecli
-               if ! kubectl get namespace backend; then
-              echo "Namespace 'backend' does not exist. Creating it now..."
-              kubectl create namespace backend
-                else
-              echo "Namespace 'backend' already exists. Skipping creation."
-              fi
-      - script: |
-              sed -i "s|#{IMAGE_NAME}#|$(IMAGE_NAME_backend)|g" $(manifests)
-        displayName: 'Replace Image Name in Manifest'
-      - task: KubernetesManifest@1
-        displayName: DeployAKSPOD
-        inputs:
-          action: 'deploy'
-          connectionType: 'azureResourceManager'
-          azureSubscriptionConnection: 'myaksfeb072025'
-          azureResourceGroup: '$(aksrg)'
-          kubernetesCluster: '${{ parameters.akscluster }}'
-          namespace: ${{ parameters.tier }}
-          manifests: '$(manifests)'
+  #         inlineScript: |
+  #             az aks get-credentials --resource-group rg-mylabmylabuksouthp-example --name aksmar17
+  #             kubelogin convert-kubeconfig -l azurecli
+  #              if ! kubectl get namespace backend; then
+  #             echo "Namespace 'backend' does not exist. Creating it now..."
+  #             kubectl create namespace backend
+  #               else
+  #             echo "Namespace 'backend' already exists. Skipping creation."
+  #             fi
+  #     - script: |
+  #             sed -i "s|#{IMAGE_NAME}#|$(IMAGE_NAME_backend)|g" $(manifests)
+  #       displayName: 'Replace Image Name in Manifest'
+  #     - task: KubernetesManifest@1
+  #       displayName: DeployAKSPOD
+  #       inputs:
+  #         action: 'deploy'
+  #         connectionType: 'azureResourceManager'
+  #         azureSubscriptionConnection: 'myaksfeb072025'
+  #         azureResourceGroup: '$(aksrg)'
+  #         kubernetesCluster: '${{ parameters.akscluster }}'
+  #         namespace: ${{ parameters.tier }}
+  #         manifests: '$(manifests)'
