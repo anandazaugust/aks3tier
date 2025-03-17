@@ -119,7 +119,7 @@ jobs:
               echo "Namespace 'backend' already exists. Skipping creation."
               fi
       - script: |
-              sed -i "s|#{IMAGE_NAME}#|$(IMAGE_NAME_backend)|g" ${{ parameters.tier }}.yml
+              sed -i "s|#{IMAGE_NAME}#|$(IMAGE_NAME_backend)|g" $(manifests)
         displayName: 'Replace Image Name in Manifest'
       - task: KubernetesManifest@1
         displayName: DeployAKSPOD
