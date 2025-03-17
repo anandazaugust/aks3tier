@@ -16,8 +16,8 @@ spec:
     spec:
       containers:
       - name: backend
-        # image: #{IMAGE_NAME}#
-        image: acrmar12.azurecr.io/backend:1295
+        image: #{IMAGE_NAME}#
+        
       
 ...
 
@@ -33,16 +33,5 @@ spec:
     - name: http
       port: 80 # Service Port
       targetPort: 80 # Container Port
-...
 
-apiVersion: v1
-kind: Service
-metadata:
-  name: mybackendprivate-service
-spec:
-  selector:
-    app: backend1
-  ports:
-    - port: 80
-      targetPort: 80
-  clusterIP: None  # Headless service
+
