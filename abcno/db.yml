@@ -1,4 +1,18 @@
 apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce  # This allows only one pod to read/write at a time
+  resources:
+    requests:
+      storage: 10Gi  # Adjust the storage size as needed
+  storageClassName: standard  # Use the default storage class (or specify another if necessary)
+
+...
+
+apiVersion: v1
 kind: ConfigMap
 metadata:
   name: mysql-init-script
@@ -58,7 +72,9 @@ spec:
               mountPath: /docker-entrypoint-initdb.d/
       volumes:
         - name: mysql-data
-          emptyDir: {}  # Temporary storage for MySQL data
+          # emptyDir: {}  # Temporary storage for MySQL data
+          persistentVolumeClaim:
+            claimName: mysql-pvc
         - name: init-script-volume
           configMap:
             name: mysql-init-script  # Mounts the init.sql script
