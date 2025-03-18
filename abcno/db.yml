@@ -12,25 +12,25 @@ spec:
 
 ...
 
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: mysql-init-script
-data:
-  init.sql: |
-    -- Create the users table
-    CREATE TABLE IF NOT EXISTS users (
-      id INT AUTO_INCREMENT PRIMARY KEY,
-      name VARCHAR(100) NOT NULL,
-      email VARCHAR(100) NOT NULL
-    );
+# apiVersion: v1
+# kind: ConfigMap
+# metadata:
+#   name: mysql-init-script
+# data:
+#   init.sql: |
+#     -- Create the users table
+#     CREATE TABLE IF NOT EXISTS users (
+#       id INT AUTO_INCREMENT PRIMARY KEY,
+#       name VARCHAR(100) NOT NULL,
+#       email VARCHAR(100) NOT NULL
+#     );
 
-    -- Insert some initial users
-    INSERT INTO users (name, email) VALUES ('John Doe', 'john.doe@example.com');
-    INSERT INTO users (name, email) VALUES ('Jane Smith', 'jane.smith@example.com');
-    INSERT INTO users (name, email) VALUES ('Sam Green', 'sam.green@example.com');
+#     -- Insert some initial users
+#     INSERT INTO users (name, email) VALUES ('John Doe', 'john.doe@example.com');
+#     INSERT INTO users (name, email) VALUES ('Jane Smith', 'jane.smith@example.com');
+#     INSERT INTO users (name, email) VALUES ('Sam Green', 'sam.green@example.com');
 
----
+# ---
 
 apiVersion: apps/v1
 kind: Deployment
@@ -68,16 +68,16 @@ spec:
           volumeMounts:
             - name: mysql-data
               mountPath: /var/lib/mysql  # MySQL expects to write data here
-            - name: init-script-volume
-              mountPath: /docker-entrypoint-initdb.d/
+            # - name: init-script-volume
+            #   mountPath: /docker-entrypoint-initdb.d/
       volumes:
         - name: mysql-data
           # emptyDir: {}  # Temporary storage for MySQL data
           persistentVolumeClaim:
             claimName: mysql-pvc
-        - name: init-script-volume
-          configMap:
-            name: mysql-init-script  # Mounts the init.sql script
+        # - name: init-script-volume
+        #   configMap:
+        #     name: mysql-init-script  # Mounts the init.sql script
 ---
 apiVersion: v1
 kind: Service
