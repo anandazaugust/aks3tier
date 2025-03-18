@@ -112,7 +112,7 @@ jobs:
           scriptLocation: 'inlineScript'
     
           inlineScript: |
-              az aks get-credentials --resource-group rg-mylabmylabuksouthp-example --name aksmar17
+              az aks get-credentials --resource-group rg-mylabmylabuksouthp-example --name ${{ parameters.akscluster }}
               kubelogin convert-kubeconfig -l azurecli
                if ! kubectl get namespace db; then
               echo "Namespace 'db' does not exist. Creating it now..."
