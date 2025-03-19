@@ -17,6 +17,9 @@ parameters:
  - name: tag
    type: string
    default: latest
+ - name: acrName
+   type: string
+   default: acrmar19
 
 
  - name: tier
@@ -31,14 +34,14 @@ parameters:
   
 
 variables:
-  imageName-frontend: 'frontend'  # Your image name
-  imageName-backend: 'backend'
-  acrName: acrmar18
+ # imageName-frontend: 'frontend'  # Your image name
+ # imageName-backend: 'backend'
+#  acrName: acrmar18
 
 
-  dockerFilePath-frontend: frontend/Dockerfile
-  dockerFilePath-backend: backend/Dockerfile
-  IMAGE_NAME: $(acrName).azurecr.io/${{ parameters.tier }}:${{ parameters.tag }}
+#  dockerFilePath-frontend: frontend/Dockerfile
+#  dockerFilePath-backend: backend/Dockerfile
+  IMAGE_NAME: ${{ parameters.acrName }}.azurecr.io/${{ parameters.tier }}:${{ parameters.tag }}
   # IMAGE_NAME_backend : $(acrName).azurecr.io/$(imageName-backend):${{ parameters.tag }}
   akscluster: aksmar17
   aksrg: 'rg-mylabmylabuksouthp-example'
