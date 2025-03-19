@@ -7,7 +7,7 @@ spec:
     - ReadWriteOnce  # This allows only one pod to read/write at a time
   resources:
     requests:
-      storage: 10Gi  # Adjust the storage size as needed
+      storage: 3Gi  # Adjust the storage size as needed
   # storageClassName: standard  # Use the default storage class (or specify another if necessary)
 
 ...
@@ -57,7 +57,10 @@ spec:
             - name: MYSQL_USER
               value: "mysqluser"
             - name: MYSQL_PASSWORD
-              value: "mysqlpassword"
+              valueFrom:
+                secretKeyRef:
+                  name: db_password
+                  key: db1_password
             # - name: INIT_SQL
             #   valueFrom:
             #     configMapKeyRef:
