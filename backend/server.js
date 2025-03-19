@@ -22,7 +22,7 @@ const pool = mysql.createPool({
 
 // API endpoint to get all users
 app.get('/api/users', (req, res) => {
-  pool.query('SELECT * FROM users', (err, results) => {
+  pool.query('SELECT * FROM gold', (err, results) => {
     if (err) {
       return res.status(500).json({ error: 'Database query error' });
     }
@@ -37,7 +37,7 @@ app.post('/api/users', (req, res) => {
     return res.status(400).json({ error: 'Name and email are required' });
   }
 
-  pool.query('INSERT INTO users (name, email) VALUES (?, ?)', [name, email], (err, results) => {
+  pool.query('INSERT INTO gold (name, email) VALUES (?, ?)', [name, email], (err, results) => {
     if (err) {
       return res.status(500).json({ error: 'Database query error' });
     }
@@ -54,7 +54,7 @@ app.put('/api/users/:id', (req, res) => {
     return res.status(400).json({ error: 'Name and email are required' });
   }
 
-  pool.query('UPDATE users SET name = ?, email = ? WHERE id = ?', [name, email, id], (err, results) => {
+  pool.query('UPDATE gold SET name = ?, email = ? WHERE id = ?', [name, email, id], (err, results) => {
     if (err) {
       return res.status(500).json({ error: 'Database query error' });
     }
@@ -69,7 +69,7 @@ app.put('/api/users/:id', (req, res) => {
 app.delete('/api/users/:id', (req, res) => {
   const { id } = req.params;
 
-  pool.query('DELETE FROM users WHERE id = ?', [id], (err, results) => {
+  pool.query('DELETE FROM gold WHERE id = ?', [id], (err, results) => {
     if (err) {
       return res.status(500).json({ error: 'Database query error' });
     }
