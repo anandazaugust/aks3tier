@@ -7,7 +7,7 @@ spec:
     - ReadWriteOnce  # This allows only one pod to read/write at a time
   resources:
     requests:
-      storage: 3Gi  # Adjust the storage size as needed
+      storage: 10Gi  # Adjust the storage size as needed
   # storageClassName: standard  # Use the default storage class (or specify another if necessary)
 
 ...
