@@ -14,7 +14,7 @@ const App = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await axios.get('http://131.145.56.109/api/users');
+      const response = await axios.get('http://131.145.77.14/api/users');
       setUsers(response.data);
       setLoading(false);
     } catch (error) {
@@ -31,7 +31,7 @@ const App = () => {
   const handleAddUser = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://131.145.56.109/api/users', { name, email });
+      const response = await axios.post('http://131.145.77.14/api/users', { name, email });
       setUsers([...users, response.data]);  // Add the new user to the state
       setName('');
       setEmail('');
@@ -44,7 +44,7 @@ const App = () => {
   const handleUpdateUser = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.put(`http://131.145.56.109/api/users/${updateUserId}`, { name: updateName, email: updateEmail });
+      const response = await axios.put(`http://131.145.77.14/api/users/${updateUserId}`, { name: updateName, email: updateEmail });
       const updatedUsers = users.map(user =>
         user.id === updateUserId ? { ...user, name: updateName, email: updateEmail } : user
       );
@@ -60,7 +60,7 @@ const App = () => {
   // Delete a user (DELETE request)
   const handleDeleteUser = async (id) => {
     try {
-      await axios.delete(`http://131.145.56.109/api/users/${id}`);
+      await axios.delete(`http://131.145.77.14/api/users/${id}`);
       const updatedUsers = users.filter((user) => user.id !== id);
       setUsers(updatedUsers);
     } catch (error) {
