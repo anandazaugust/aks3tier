@@ -13,7 +13,7 @@ app.use(cors());
 const pool = mysql.createPool({
   host: 'mysql-service.db',  // Change to your MySQL service name in AKS
   user: 'mysqluser',
-  password: 'mysqlpassword',
+  password: 'MYSQL_PASSWORD',
   database: 'ananddb',
   waitForConnections: true,
   connectionLimit: 10,
