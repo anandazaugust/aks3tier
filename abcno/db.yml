@@ -59,8 +59,8 @@ spec:
             - name: MYSQL_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: db_password
-                  key: db1_password
+                  name: db-password
+                  key: db1-password
             # - name: INIT_SQL
             #   valueFrom:
             #     configMapKeyRef:
