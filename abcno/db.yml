@@ -51,16 +51,26 @@ spec:
           image: mysql
           env:
             - name: MYSQL_ROOT_PASSWORD
-              value: "rootpassword"
-            - name: MYSQL_DATABASE
-              value: "ananddb"
-            - name: MYSQL_USER
-              value: "mysqluser"
-            - name: MYSQL_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: db-password
-                  key: db1-password
+                  name: mysqlsecret
+                  key: mysql-rootpassword
+            - name: MYSQL_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: mysqlsecret
+                  key: mysql-database
+             - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mysqlsecret
+                  key: mysql-user
+              - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysqlsecret
+                  key: mysql-password
+           
             # - name: INIT_SQL
             #   valueFrom:
             #     configMapKeyRef:
