@@ -60,12 +60,12 @@ spec:
                 secretKeyRef:
                   name: mysqlsecret
                   key: mysql-database
-             - name: MYSQL_USER
+            - name: MYSQL_USER
               valueFrom:
                 secretKeyRef:
                   name: mysqlsecret
                   key: mysql-user
-              - name: MYSQL_PASSWORD
+            - name: MYSQL_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: mysqlsecret
