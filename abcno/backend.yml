@@ -23,18 +23,18 @@ spec:
               secretKeyRef:
                       name: mysqlsecret
                       key: mysql-host
-           - name: mysql_user
-             valueFrom:
+          - name: mysql_user
+            valueFrom:
                     secretKeyRef:
                       name: mysqlsecret
                       key: mysql-user
-            - name: mysql_password
-              valueFrom:
+          - name: mysql_password
+            valueFrom:
                     secretKeyRef:
                       name: mysqlsecret
                       key: mysql-password
-             - name: mysql_database
-               valueFrom:
+          - name: mysql_database
+            valueFrom:
                     secretKeyRef:
                       name: mysqlsecret
                       key: mysql-database
@@ -54,5 +54,3 @@ spec:
     - name: http
       port: 80 # Service Port
       targetPort: 80 # Container Port
-
-
