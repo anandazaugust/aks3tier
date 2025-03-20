@@ -17,27 +17,28 @@ spec:
       containers:
       - name: backend
         image: #{IMAGE_NAME}#
-      - name: mysql_host
-        valueFrom:
-          secretKeyRef:
-                  name: mysqlsecret
-                  key: mysql-host
-       - name: mysql_user
-         valueFrom:
-                secretKeyRef:
-                  name: mysqlsecret
-                  key: mysql-user
-        - name: mysql_password
-          valueFrom:
-                secretKeyRef:
-                  name: mysqlsecret
-                  key: mysql-password
-         - name: mysql_database
-           valueFrom:
-                secretKeyRef:
-                  name: mysqlsecret
-                  key: mysql-database
-        
+        env: 
+          - name: mysql_host
+            valueFrom:
+              secretKeyRef:
+                      name: mysqlsecret
+                      key: mysql-host
+           - name: mysql_user
+             valueFrom:
+                    secretKeyRef:
+                      name: mysqlsecret
+                      key: mysql-user
+            - name: mysql_password
+              valueFrom:
+                    secretKeyRef:
+                      name: mysqlsecret
+                      key: mysql-password
+             - name: mysql_database
+               valueFrom:
+                    secretKeyRef:
+                      name: mysqlsecret
+                      key: mysql-database
+            
       
 ...
 
