@@ -85,10 +85,16 @@ jobs:
           scriptType: 'bash'
           scriptLocation: 'inlineScript'
           inlineScript: |
-            az aks get-credentials --resource-group rg-mylabmylabuksouthp-example --name ${{ parameters.akscluster }}
+            # az aks get-credentials --resource-group rg-mylabmylabuksouthp-example --name ${{ parameters.akscluster }}
             
-            kubectl create secret generic mysqlsecret --from-literal=mysql-host=$(mysql-host) --from-literal=mysql-user=$(mysql-user) --from-literal=mysql-password=$(mysql-password)  --from-literal=mysql-database=$(mysql-database) -n ${{ parameters.tier }}
-        
+            # kubectl create secret generic mysqlsecret --from-literal=mysql-host=$(mysql-host) --from-literal=mysql-user=$(mysql-user) --from-literal=mysql-password=$(mysql-password)  --from-literal=mysql-database=$(mysql-database) -n ${{ parameters.tier }}
+            if ! kubectl get secret mysqlsecret -n backend; then
+              echo "secret does not exist. Creating it now..."
+              kubectl create secret generic mysqlsecret --from-literal=mysql-host=$(mysql-host) --from-literal=mysql-user=$(mysql-user) --from-literal=mysql-password=$(mysql-password)  --from-literal=mysql-database=$(mysql-database) -n ${{ parameters.tier }}
+            else
+              echo "secret already exists. Skipping creation."
+            fi
+
 
       - script: |
               sed -i "s|#{IMAGE_NAME}#|$(IMAGE_NAME)|g" $(manifests)
