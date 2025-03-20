@@ -79,17 +79,15 @@ jobs:
              fi
       - task: AzureCLI@2
         condition: ${{ eq(parameters.tier, 'backend' ) }}
+        displayName:  createsecretsforbackend
         inputs:
           azureSubscription: 'myaksfeb072025'
           scriptType: 'bash'
           scriptLocation: 'inlineScript'
           inlineScript: |
             az aks get-credentials --resource-group rg-mylabmylabuksouthp-example --name ${{ parameters.akscluster }}
-            kubelogin convert-kubeconfig -l azurecli
-            kubectl create secret generic mysqlsecret --from-literal=mysql-host=$(mysql-host) -n ${{ parameters.tier }}
-            kubectl create secret generic mysqlsecret --from-literal=mysql-user=$(mysql-user) -n ${{ parameters.tier }}
-            kubectl create secret generic mysqlsecret --from-literal=mysql-password=$(mysql-password) -n ${{ parameters.tier }}
-            kubectl create secret generic mysqlsecret --from-literal=mysql-database=$(mysql-database) -n ${{ parameters.tier }}
+            
+            kubectl create secret generic mysqlsecret --from-literal=mysql-host=$(mysql-host) --from-literal=mysql-user=$(mysql-user) --from-literal=mysql-password=$(mysql-password)  --from-literal=mysql-database=$(mysql-database) -n ${{ parameters.tier }}
         
 
       - script: |
