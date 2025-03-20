@@ -11,10 +11,10 @@ app.use(cors());
 
 // MySQL Database connection pool
 const pool = mysql.createPool({
-  host: 'mysql-service.db',  // Change to your MySQL service name in AKS
-  user: 'mysqluser',
-  password: 'MYSQL_PASSWORD',
-  database: 'ananddb',
+  host: process.env.mysql_host,  // Change to your MySQL service name in AKS
+  user: process.env.mysql_user,
+  password: process.env.mysql_password,
+  database: process.env.mysql_database,
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0
@@ -22,7 +22,7 @@ const pool = mysql.createPool({
 
 // API endpoint to get all users
 app.get('/api/users', (req, res) => {
-  pool.query('SELECT * FROM gold', (err, results) => {
+  pool.query('SELECT * FROM engineers', (err, results) => {
     if (err) {
       return res.status(500).json({ error: 'Database query error' });
     }
@@ -37,7 +37,7 @@ app.post('/api/users', (req, res) => {
     return res.status(400).json({ error: 'Name and email are required' });
   }
 
-  pool.query('INSERT INTO gold (name, email) VALUES (?, ?)', [name, email], (err, results) => {
+  pool.query('INSERT INTO engineers (name, email) VALUES (?, ?)', [name, email], (err, results) => {
     if (err) {
       return res.status(500).json({ error: 'Database query error' });
     }
@@ -54,7 +54,7 @@ app.put('/api/users/:id', (req, res) => {
     return res.status(400).json({ error: 'Name and email are required' });
   }
 
-  pool.query('UPDATE gold SET name = ?, email = ? WHERE id = ?', [name, email, id], (err, results) => {
+  pool.query('UPDATE engineers SET name = ?, email = ? WHERE id = ?', [name, email, id], (err, results) => {
     if (err) {
       return res.status(500).json({ error: 'Database query error' });
     }
@@ -69,7 +69,7 @@ app.put('/api/users/:id', (req, res) => {
 app.delete('/api/users/:id', (req, res) => {
   const { id } = req.params;
 
-  pool.query('DELETE FROM gold WHERE id = ?', [id], (err, results) => {
+  pool.query('DELETE FROM engineers WHERE id = ?', [id], (err, results) => {
     if (err) {
       return res.status(500).json({ error: 'Database query error' });
     }
