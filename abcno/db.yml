@@ -80,5 +80,19 @@ spec:
             - containerPort: 3306
           volumeMounts:
             - name: mysql-data
-              mountPath ▋
+              mountPath: /var/lib/mysql  # MySQL expects to write data her
+...
+
+ apiVersion: v1
+ kind: Service
+ metadata:
+    name: mysql-service
+    spec:
+               # type: LoadBalancer # ClusterIp, # NodePort
+                         
+     app: mysql1
+     ports:
+       - port: 3306
+         targetPort: 3306
+     clusterIP: None  # Headless service           
 
