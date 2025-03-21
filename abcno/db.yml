@@ -80,8 +80,9 @@ spec:
             - containerPort: 3306  # MySQL default port
       volumes:
        - name: mysql-data
-         persistentVolumeClaim:
-          claimName: mysql-pvc  # Use PVC instead of emptyDir for persistent data storage     
+         emptyDir: {}
+         # persistentVolumeClaim:
+         #  claimName: mysql-pvc  # Use PVC instead of emptyDir for persistent data storage     
             
       
       
