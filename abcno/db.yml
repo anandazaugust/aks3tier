@@ -49,6 +49,7 @@ spec:
       containers:
         - name: mysql
           image: mysql
+          
           env:
             - name: MYSQL_ROOT_PASSWORD
               valueFrom:
@@ -70,7 +71,9 @@ spec:
                 secretKeyRef:
                   name: mysqlsecret
                   key: mysql-password
-          
+          volumes:
+          - name: mysql-data
+            emptyDir: {}
             # - name: INIT_SQL
             #   valueFrom:
             #     configMapKeyRef:
@@ -78,6 +81,7 @@ spec:
             #       key: init.sql  # Key for the SQL script
           ports:
             - containerPort: 3306
+          
           volumeMounts:
             - name: mysql-data
               mountPath: /var/lib/mysql  # MySQL expects to write data her
