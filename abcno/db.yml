@@ -1,39 +1,84 @@
+# apiVersion: v1
+# kind: PersistentVolumeClaim
+# metadata:
+#   name: mysql-pvc
+# spec:
+#   accessModes:
+#     - ReadWriteOnce  # This allows only one pod to read/write at a time
+#   resources:
+#     requests:
+#       storage: 3Gi  # Adjust the storage size as needed
+#   # storageClassName: standard  # Use the default storage class (or specify another if necessary)
 
+...
+
+# apiVersion: v1
+# kind: ConfigMap
+# metadata:
+#   name: mysql-init-script
+# data:
+#   init.sql: |
+#     -- Create the users table
+#     CREATE TABLE IF NOT EXISTS users (
+#       id INT AUTO_INCREMENT PRIMARY KEY,
+#       name VARCHAR(100) NOT NULL,
+#       email VARCHAR(100) NOT NULL
+#     );
+
+#     -- Insert some initial users
+#     INSERT INTO users (name, email) VALUES ('John Doe', 'john.doe@example.com');
+#     INSERT INTO users (name, email) VALUES ('Jane Smith', 'jane.smith@example.com');
+#     INSERT INTO users (name, email) VALUES ('Sam Green', 'sam.green@example.com');
+
+# ---
 
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend5
-  
+  name: mysql-deployment
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
-      app: frontend3
+      app: mysql1
   template:
     metadata:
       labels:
-        app: frontend3
+        app: mysql1
     spec:
       containers:
-      - name: devopspod
-        image: #{IMAGE_NAME}#
-      - env:
-        - name: REACT_APP_API_URL
-          value: http://172.166.13.198
-        # image: acrmar12.azurecr.io/frontend:1309
-...
+        - name: mysql
+          image: mysql
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysqlsecret
+                  key: mysql-rootpassword
+            - name: MYSQL_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: mysqlsecret
+                  key: mysql-database
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mysqlsecret
+                  key: mysql-user
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysqlsecret
+                  key: mysql-password
+          
+            # - name: INIT_SQL
+            #   valueFrom:
+            #     configMapKeyRef:
+            #       name: mysql-init-script  # ConfigMap that holds the init.sql
+            #       key: init.sql  # Key for the SQL script
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - name: mysql-data
+              mountPath ▋
 
-apiVersion: v1
-kind: Service 
-metadata:
-  name: frontend-lb
-  
-spec:
-  type: LoadBalancer # ClusterIp, # NodePort
-  selector:
-    app: frontend3
-  ports: 
-    - name: http
-      port: 80 # Service Port
-      targetPort: 80 # Container Port
