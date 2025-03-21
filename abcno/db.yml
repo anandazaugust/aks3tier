@@ -73,14 +73,14 @@ spec:
                 secretKeyRef:
                   name: mysqlsecret
                   key: mysql-password
-          volumes:
-            - name: mysql-data
-              persistentVolumeClaim:
-                claimName: mysql-pvc  # Use PVC instead of emptyDir for persistent data storage
+      volumes:
+       - name: mysql-data
+         persistentVolumeClaim:
+         claimName: mysql-pvc  # Use PVC instead of emptyDir for persistent data storage     
             
-          ports:
+      ports:
             - containerPort: 3306  # MySQL default port
-          volumeMounts:
+      volumeMounts:
             - name: mysql-data
               mountPath: /var/lib/mysql  # MySQL expects to write data here
             
