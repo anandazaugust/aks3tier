@@ -1,3 +1,4 @@
+# PersistentVolumeClaim (PVC) for MySQL data storage
 # apiVersion: v1
 # kind: PersistentVolumeClaim
 # metadata:
@@ -8,10 +9,11 @@
 #   resources:
 #     requests:
 #       storage: 3Gi  # Adjust the storage size as needed
-#   # storageClassName: standard  # Use the default storage class (or specify another if necessary)
+#   # storageClassName: standard  # Uncomment this line if you want to specify a storage class
 
-...
+# ---
 
+# ConfigMap for MySQL initialization script
 # apiVersion: v1
 # kind: ConfigMap
 # metadata:
@@ -32,6 +34,7 @@
 
 # ---
 
+# Deployment for MySQL pod with persistent volume and environment variables from secrets
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -48,8 +51,7 @@ spec:
     spec:
       containers:
         - name: mysql
-          image: mysql
-          
+          image: mysql  # Ensure to specify the correct MySQL version
           env:
             - name: MYSQL_ROOT_PASSWORD
               valueFrom:
@@ -72,31 +74,28 @@ spec:
                   name: mysqlsecret
                   key: mysql-password
           volumes:
-          - name: mysql-data
-            emptyDir: {}
-            # - name: INIT_SQL
-            #   valueFrom:
-            #     configMapKeyRef:
-            #       name: mysql-init-script  # ConfigMap that holds the init.sql
-            #       key: init.sql  # Key for the SQL script
+            - name: mysql-data
+              persistentVolumeClaim:
+                claimName: mysql-pvc  # Use PVC instead of emptyDir for persistent data storage
+            
           ports:
-            - containerPort: 3306
-          
+            - containerPort: 3306  # MySQL default port
           volumeMounts:
             - name: mysql-data
-              mountPath: /var/lib/mysql  # MySQL expects to write data her
-...
+              mountPath: /var/lib/mysql  # MySQL expects to write data here
+            
 
- apiVersion: v1
- kind: Service
- metadata:
-    name: mysql-service
-    spec:
-               # type: LoadBalancer # ClusterIp, # NodePort
-                         
-     app: mysql1
-     ports:
-       - port: 3306
-         targetPort: 3306
-     clusterIP: None  # Headless service           
+---
 
+# Service for exposing MySQL with ClusterIP (headless service for database)
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-service
+spec:
+  clusterIP: None  # Headless service (no load balancing)
+  ports:
+    - port: 3306
+      targetPort: 3306
+  selector:
+    app: mysql1  # Ensure it selects the right deployment based on labels
