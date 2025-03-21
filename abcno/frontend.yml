@@ -16,7 +16,7 @@ spec:
       containers:
       - name: devopspod
         image: #{IMAGE_NAME}#
-      - env:
+        env:
           name: REACT_APP_API_URL
           value: http://131.145.81.122
         # image: acrmar12.azurecr.io/frontend:1309
