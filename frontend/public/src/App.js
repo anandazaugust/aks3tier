@@ -13,61 +13,59 @@ const App = () => {
   const [updateName, setUpdateName] = useState('');
   const [updateEmail, setUpdateEmail] = useState('');
 
-  const fetchUsers = async () => {
-    try {
-      const response = await axios.get('http://131.145.77.14/api/users');
-      setUsers(response.data);
-      setLoading(false);
-    } catch (error) {
-      setError('Failed to fetch data');
-      setLoading(false);
-    }
-  };
+// Fetch Users
+const fetchUsers = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/api/users`);
+    setUsers(response.data);
+    setLoading(false);
+  } catch (error) {
+    setError('Failed to fetch data');
+    setLoading(false);
+  }
+};
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
+// Add a new user (POST request)
+const handleAddUser = async (e) => {
+  e.preventDefault();
+  try {
+    const response = await axios.post(`${API_URL}/api/users`, { name, email });
+    setUsers([...users, response.data]);  // Add the new user to the state
+    setName('');
+    setEmail('');
+  } catch (error) {
+    console.error('Error adding user:', error);
+  }
+};
 
-  // Add a new user (POST request)
-  const handleAddUser = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await axios.post('http://131.145.77.14/api/users', { name, email });
-      setUsers([...users, response.data]);  // Add the new user to the state
-      setName('');
-      setEmail('');
-    } catch (error) {
-      console.error('Error adding user:', error);
-    }
-  };
+// Update an existing user (PUT request)
+const handleUpdateUser = async (e) => {
+  e.preventDefault();
+  try {
+    const response = await axios.put(`${API_URL}/api/users/${updateUserId}`, { name: updateName, email: updateEmail });
+    const updatedUsers = users.map(user =>
+      user.id === updateUserId ? { ...user, name: updateName, email: updateEmail } : user
+    );
+    setUsers(updatedUsers);
+    setUpdateUserId(null);
+    setUpdateName('');
+    setUpdateEmail('');
+  } catch (error) {
+    console.error('Error updating user:', error);
+  }
+};
 
-  // Update an existing user (PUT request)
-  const handleUpdateUser = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await axios.put(`http://131.145.77.14/api/users/${updateUserId}`, { name: updateName, email: updateEmail });
-      const updatedUsers = users.map(user =>
-        user.id === updateUserId ? { ...user, name: updateName, email: updateEmail } : user
-      );
-      setUsers(updatedUsers);
-      setUpdateUserId(null);
-      setUpdateName('');
-      setUpdateEmail('');
-    } catch (error) {
-      console.error('Error updating user:', error);
-    }
-  };
+// Delete a user (DELETE request)
+const handleDeleteUser = async (id) => {
+  try {
+    await axios.delete(`${API_URL}/api/users/${id}`);
+    const updatedUsers = users.filter((user) => user.id !== id);
+    setUsers(updatedUsers);
+  } catch (error) {
+    console.error('Error deleting user:', error);
+  }
+};
 
-  // Delete a user (DELETE request)
-  const handleDeleteUser = async (id) => {
-    try {
-      await axios.delete(`http://131.145.77.14/api/users/${id}`);
-      const updatedUsers = users.filter((user) => user.id !== id);
-      setUsers(updatedUsers);
-    } catch (error) {
-      console.error('Error deleting user:', error);
-    }
-  };
 
   return (
     <div className="App">
