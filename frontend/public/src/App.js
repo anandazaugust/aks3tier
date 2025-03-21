@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './App.css';
+const API_URL = process.env.REACT_APP_API_URL;
 
 const App = () => {
   const [users, setUsers] = useState([]);
@@ -14,7 +15,7 @@ const App = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await axios.get({process.env.REACT_APP_API_URL}/api/users);  // Corrected string interpolation
+      const response = await axios.get(API_URL);  // Corrected string interpolation
       setUsers(response.data);
       setLoading(false);
     } catch (error) {
@@ -31,7 +32,7 @@ const App = () => {
   const handleAddUser = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(process.env.REACT_APP_API_URL/api/users`, { name, email });  // Corrected string interpolation
+      const response = await axios.post(API_URL, { name, email });  // Corrected string interpolation
       setUsers([...users, response.data]);  // Add the new user to the state
       setName('');
       setEmail('');
@@ -44,7 +45,7 @@ const App = () => {
   const handleUpdateUser = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.put(process.env.REACT_APP_API_URL/api/users/${updateUserId}`, { name: updateName, email: updateEmail });  // Corrected string interpolation
+      const response = await axios.put(`${API_URL}/${updateUserId}`, { name: updateName, email: updateEmail });  // Corrected string interpolation
       const updatedUsers = users.map(user =>
         user.id === updateUserId ? { ...user, name: updateName, email: updateEmail } : user
       );
@@ -60,7 +61,7 @@ const App = () => {
   // Delete a user (DELETE request)
   const handleDeleteUser = async (id) => {
     try {
-      await axios.delete(process.env.REACT_APP_API_URL}/api/users/${id});  // Corrected string interpolation
+      await axios.delete(`${API_URL}/${id}`);  // Corrected string interpolation
       const updatedUsers = users.filter((user) => user.id !== id);
       setUsers(updatedUsers);
     } catch (error) {
