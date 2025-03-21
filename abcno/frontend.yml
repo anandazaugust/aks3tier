@@ -1,5 +1,3 @@
-
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -19,7 +17,7 @@ spec:
       - name: devopspod
         image: #{IMAGE_NAME}#
       - env:
-         -name: REACT_APP_API_URL
+          name: REACT_APP_API_URL
           value: http://131.145.81.122
         # image: acrmar12.azurecr.io/frontend:1309
 ...
