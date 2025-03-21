@@ -15,7 +15,7 @@ const App = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await axios.get(API_URL);  // Corrected string interpolation
+      const response = await axios.get('http://131.145.77.14/api/users');
       setUsers(response.data);
       setLoading(false);
     } catch (error) {
@@ -32,7 +32,7 @@ const App = () => {
   const handleAddUser = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(API_URL, { name, email });  // Corrected string interpolation
+      const response = await axios.post('http://131.145.77.14/api/users', { name, email });
       setUsers([...users, response.data]);  // Add the new user to the state
       setName('');
       setEmail('');
@@ -45,7 +45,7 @@ const App = () => {
   const handleUpdateUser = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.put(`${API_URL}/${updateUserId}`, { name: updateName, email: updateEmail });  // Corrected string interpolation
+      const response = await axios.put(`http://131.145.77.14/api/users/${updateUserId}`, { name: updateName, email: updateEmail });
       const updatedUsers = users.map(user =>
         user.id === updateUserId ? { ...user, name: updateName, email: updateEmail } : user
       );
@@ -61,7 +61,7 @@ const App = () => {
   // Delete a user (DELETE request)
   const handleDeleteUser = async (id) => {
     try {
-      await axios.delete(`${API_URL}/${id}`);  // Corrected string interpolation
+      await axios.delete(`http://131.145.77.14/api/users/${id}`);
       const updatedUsers = users.filter((user) => user.id !== id);
       setUsers(updatedUsers);
     } catch (error) {
