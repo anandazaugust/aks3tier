@@ -20,7 +20,7 @@ spec:
         image: #{IMAGE_NAME}#
       - env:
          -name: REACT_APP_API_URL
-          value: http://172.166.13.198
+          value: http://131.145.81.122
         # image: acrmar12.azurecr.io/frontend:1309
 ...
 
