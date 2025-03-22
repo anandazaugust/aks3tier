@@ -2,12 +2,19 @@ const express = require('express');
 const cors = require('cors');
 const mysql = require('mysql2');
 
+
+
 const app = express();
 const port = 80;
 
+const corsOptions = {
+  origin: process.env.frontendurl  // Replace with your actual frontend URL
+
+};
+
 // Middleware for parsing JSON
 app.use(express.json());
-app.use(cors());
+app.use(cors(corsOptions)); ;
 
 // MySQL Database connection pool
 const pool = mysql.createPool({
