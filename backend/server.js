@@ -14,7 +14,7 @@ const corsOptions = {
 
 // Middleware for parsing JSON
 app.use(express.json());
-app.use(cors(corsOptions)); ;
+app.use(cors(corsOptions));
 
 // MySQL Database connection pool
 const pool = mysql.createPool({
