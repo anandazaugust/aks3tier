@@ -19,7 +19,7 @@ spec:
         image: #{IMAGE_NAME}#
         env: 
           - name: frontendurl
-            value: 4.158.120.57
+            value: http://4.158.120.57/
           - name: mysql_host
             valueFrom:
               secretKeyRef:
