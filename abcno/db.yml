@@ -1,0 +1,104 @@
+# PersistentVolumeClaim (PVC) for MySQL data storage
+# apiVersion: v1
+# kind: PersistentVolumeClaim
+# metadata:
+#   name: mysql-pvc
+# spec:
+#   accessModes:
+#     - ReadWriteOnce  # This allows only one pod to read/write at a time
+#   resources:
+#     requests:
+#       storage: 3Gi  # Adjust the storage size as needed
+#   # storageClassName: standard  # Uncomment this line if you want to specify a storage class
+
+# ---
+
+# ConfigMap for MySQL initialization script
+# apiVersion: v1
+# kind: ConfigMap
+# metadata:
+#   name: mysql-init-script
+# data:
+#   init.sql: |
+#     -- Create the users table
+#     CREATE TABLE IF NOT EXISTS users (
+#       id INT AUTO_INCREMENT PRIMARY KEY,
+#       name VARCHAR(100) NOT NULL,
+#       email VARCHAR(100) NOT NULL
+#     );
+
+#     -- Insert some initial users
+#     INSERT INTO users (name, email) VALUES ('John Doe', 'john.doe@example.com');
+#     INSERT INTO users (name, email) VALUES ('Jane Smith', 'jane.smith@example.com');
+#     INSERT INTO users (name, email) VALUES ('Sam Green', 'sam.green@example.com');
+
+# ---
+
+# Deployment for MySQL pod with persistent volume and environment variables from secrets
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql1
+  template:
+    metadata:
+      labels:
+        app: mysql1
+    spec:
+      containers:
+        - name: mysql
+          image: mysql  # Ensure to specify the correct MySQL version
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysqlsecret
+                  key: mysql-rootpassword
+            - name: MYSQL_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: mysqlsecret
+                  key: mysql-database
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mysqlsecret
+                  key: mysql-user
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysqlsecret
+                  key: mysql-password
+          volumeMounts:
+            - name: mysql-data
+              mountPath: /var/lib/mysql  # MySQL expects to write data here
+          ports:
+            - containerPort: 3306  # MySQL default port
+      volumes:
+       - name: mysql-data
+         emptyDir: {}
+         # persistentVolumeClaim:
+         #  claimName: mysql-pvc  # Use PVC instead of emptyDir for persistent data storage     
+            
+      
+      
+            
+
+---
+
+# Service for exposing MySQL with ClusterIP (headless service for database)
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-service
+spec:
+  clusterIP: None  # Headless service (no load balancing)
+  ports:
+    - port: 3306
+      targetPort: 3306
+  selector:
+    app: mysql1  # Ensure it selects the right deployment based on labels

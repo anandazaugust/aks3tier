@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend5
+  
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: frontend3
+  template:
+    metadata:
+      labels:
+        app: frontend3
+    spec:
+      containers:
+      - name: devopspod
+        image: #{IMAGE_NAME}#
+        env:
+          - name: REACT_APP_API_URL
+            value: http://20.26.65.25
+        # image: acrmar12.azurecr.io/frontend:1309
+...
+
+apiVersion: v1
+kind: Service 
+metadata:
+  name: frontend-lb
+  
+spec:
+  type: LoadBalancer # ClusterIp, # NodePort
+  selector:
+    app: frontend3
+  ports: 
+    - name: http
+      port: 80 # Service Port
+      targetPort: 80 # Container Port

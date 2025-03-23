@@ -1,0 +1,58 @@
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend1
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: backend1
+  template:
+    metadata:
+      labels:
+        app: backend1
+    spec:
+      containers:
+      - name: backend
+        image: #{IMAGE_NAME}#
+        env: 
+          - name: frontendurl
+            value: http://medium.alwayslearn.in
+          - name: mysql_host
+            valueFrom:
+              secretKeyRef:
+                      name: mysqlsecret
+                      key: mysql-host
+          - name: mysql_user
+            valueFrom:
+                    secretKeyRef:
+                      name: mysqlsecret
+                      key: mysql-user
+          - name: mysql_password
+            valueFrom:
+                    secretKeyRef:
+                      name: mysqlsecret
+                      key: mysql-password
+          - name: mysql_database
+            valueFrom:
+                    secretKeyRef:
+                      name: mysqlsecret
+                      key: mysql-database
+            
+      
+...
+
+apiVersion: v1
+kind: Service 
+metadata:
+  name: backend-lb
+spec:
+  type: LoadBalancer # ClusterIp, # NodePort
+  selector:
+    app: backend1
+  ports: 
+    - name: http
+      port: 80 # Service Port
+      targetPort: 80 # Container Port

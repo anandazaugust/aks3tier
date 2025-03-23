@@ -1,0 +1,36 @@
+trigger: none
+pr: none
+
+
+
+pool:
+  vmImage: ubuntu-latest
+
+jobs:
+
+ - job: arti1
+   displayName: onlyacrjob-frontend
+
+   steps:
+
+       
+
+       - task: DownloadBuildArtifacts@1
+         inputs:
+           buildType: 'specific'
+           project: '72b2d7e8-f689-474f-99ed-cb1a3749837a'
+           pipeline: '67'
+           buildVersionToDownload: 'latest'
+           downloadType: 'single'
+           downloadPath: '$(Build.ArtifactStagingDirectory)/backend'
+           artifactName: backend-image-tag
+
+    
+       - script: |
+                # Read the image tag from the artifact
+                IMAGE_TAG=$(cat $(Build.ArtifactStagingDirectory)/frontend/image-frontend.txt)
+                echo "Using image tag: $IMAGE_TAG"
+       - script: |
+                # Read the image tag from the artifact
+                IMAGE_TAG2=$(cat $(Build.ArtifactStagingDirectory)/backend/image-backend.txt)
+                echo "Using image tag: $IMAGE_TAG2"
