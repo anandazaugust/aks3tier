@@ -1,0 +1,93 @@
+
+
+trigger: none
+pr: none
+
+
+
+pool:
+  vmImage: ubuntu-latest
+
+
+
+
+
+
+parameters:
+
+
+ - name: acrname
+   type: string
+   default: acrmar16
+
+
+ - name: apiUrl
+   type: string
+    
+
+
+
+  
+
+variables:
+  imageName-frontend: 'frontend'  # Your image name
+
+
+  tag: $(Build.BuildId)   # Tag for your image
+  dockerFilePath-frontend: frontend/Dockerfile
+
+
+
+
+  
+      
+
+jobs:
+
+
+ - job: onlyacrjobfrontend
+   displayName: onlyacrjob-frontend
+  
+   steps:
+
+        - task: AzureCLI@2
+          displayName: login to ACR task
+          inputs:
+            azureSubscription: 'myaksfeb072025'
+            scriptType: 'bash'
+            scriptLocation: 'inlineScript'
+            inlineScript: 'az acr login --name ${{ parameters.acrname }}'
+          
+        - script: |
+            echo "npm installation..."
+            cd frontend
+            npm install
+          displayName: 'installing npm'  
+
+        - script: |
+            echo "Building Docker image..."
+            # docker build -f $(dockerFilePath-frontend) -t ${{ parameters.acrname }}.azurecr.io/$(imageName-frontend):$(tag) --build-arg REACT_APP_API_URL=${{ parameters.apiUrl }} .  # Build the image and tag it
+            docker build -f $(dockerFilePath-frontend) -t ${{ parameters.acrname }}.azurecr.io/$(imageName-frontend):$(tag) .
+          displayName: 'Build Docker Image script'
+
+        - script: |
+            echo "show docker image..."
+            docker images
+          displayName: 'show docker images script'
+
+
+        - script: |
+            echo "Pushing Docker image to ACR..."
+            docker push ${{ parameters.acrname }}.azurecr.io/$(imageName-frontend):$(tag)  # Push the image to ACR
+          displayName: 'Push Docker Image to ACR script'
+        - script: |
+         
+               docker tag ${{ parameters.acrname }}.azurecr.io/$(imageName-frontend):$(tag) ${{ parameters.acrname }}.azurecr.io/$(imageName-frontend):latest
+               docker push ${{ parameters.acrname }}.azurecr.io/$(imageName-frontend):latest
+
+        - script: |
+              echo "show docker image..."
+              docker images
+          displayName: 'show docker images script'    
+ 
+
