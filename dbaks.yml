@@ -30,7 +30,7 @@ parameters:
 
 variables:
 
-  IMAGE_NAME: ${{ parameters.acrName }}.azurecr.io/${{ parameters.tier }}:${{ parameters.tag }}
+  
 
   akscluster: aksmar17
   aksrg: 'rg-mylabmylabuksouthp-example'
