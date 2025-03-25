@@ -66,7 +66,7 @@ jobs:
 
         - script: |
             echo "Building Docker image..."
-            docker build -f $(dockerFilePath-frontend) -t ${{ parameters.acrname }}.azurecr.io/$(imageName-frontend):$(tag) --build-arg REACT_APP_API_URL=${{ parameters.REACt_APP_API_URL }} .  # Build the image and tag it
+            docker build -f $(dockerFilePath-frontend) -t ${{ parameters.acrname }}.azurecr.io/$(imageName-frontend):$(tag) --build-arg REACT_APP_API_URL=${{ parameters.REACT_APP_API_URL }} .  # Build the image and tag it
             # docker build -f $(dockerFilePath-frontend) -t ${{ parameters.acrname }}.azurecr.io/$(imageName-frontend):$(tag) .
           displayName: 'Build Docker Image script'
 
