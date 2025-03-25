@@ -1,1 +1,109 @@
 
+
+trigger: none
+pr: none
+
+
+
+pool:
+  vmImage: ubuntu-latest
+
+
+
+parameters:
+
+ - name: akscluster
+   type: string
+   default: aksmar17
+ - name: tag
+   type: string
+   default: latest
+ - name: acrName
+   type: string
+   default: acrmar19
+
+
+ - name: tier
+   type: string
+   default: 'frontend'
+   values: 
+     - frontend
+     - backend
+
+
+
+  
+
+variables:
+
+  IMAGE_NAME: ${{ parameters.acrName }}.azurecr.io/${{ parameters.tier }}:${{ parameters.tag }}
+  # IMAGE_NAME_backend : $(acrName).azurecr.io/$(imageName-backend):${{ parameters.tag }}
+  akscluster: aksmar17
+  aksrg: 'rg-mylabmylabuksouthp-example'
+  manifests: '$(Build.SourcesDirectory)/abcno/${{ parameters.tier }}.yml'
+
+jobs: 
+
+  - job: aksjobfrontend_onlyaks
+    displayName: AKSJobfrontend-onlyaks
+    timeoutInMinutes: 3 # how long to run the job before automatically cancelling
+    cancelTimeoutInMinutes: 2 # how much time to give 'run always even if cancelled tasks' before stopping them
+  
+    
+
+    steps:
+      - task: KubeloginInstaller@0
+        inputs:
+          kubeloginVersion: 'latest'
+        displayName: installkubelogin
+      
+      - task: AzureCLI@2
+        inputs:
+          azureSubscription: 'myaksfeb072025'
+          scriptType: 'bash'
+          scriptLocation: 'inlineScript'
+          inlineScript: |
+           
+            az aks get-credentials --resource-group rg-mylabmylabuksouthp-example --name ${{ parameters.akscluster }}
+            kubelogin convert-kubeconfig -l azurecli
+             if ! kubectl get namespace ${{ parameters.tier }}; then
+              echo "Namespace '${{ parameters.tier }}' does not exist. Creating it now..."
+              kubectl create namespace ${{ parameters.tier }}
+             else
+              echo "Namespace '${{ parameters.tier }}' already exists. Skipping creation."
+             fi
+      - task: AzureCLI@2
+        displayName:  createsecretsforbackend-db
+        inputs:
+          azureSubscription: 'myaksfeb072025'
+          scriptType: 'bash'
+          scriptLocation: 'inlineScript'
+          inlineScript: |
+         
+            
+            
+            if ! kubectl get secret mysqlsecret -n backend; then
+              echo "secret does not exist. Creating it now..."
+              kubectl create secret generic mysqlsecret --from-literal=mysql-host=$(mysql-host) --from-literal=mysql-user=$(mysql-user) --from-literal=mysql-password=$(mysql-password)  --from-literal=mysql-database=$(mysql-database) -n ${{ parameters.tier }}
+            else
+              echo "secret already exists. Skipping creation."
+            fi
+
+
+      - script: |
+              sed -i "s|#{IMAGE_NAME}#|$(IMAGE_NAME)|g" $(manifests)
+        displayName: 'Replace Image Name in Manifest'
+        
+
+      - task: KubernetesManifest@1
+        displayName: DeployAKSPOD
+        inputs:
+          action: 'deploy'
+          connectionType: 'azureResourceManager'
+          azureSubscriptionConnection: 'myaksfeb072025'
+          azureResourceGroup: '$(aksrg)'
+          kubernetesCluster: '${{ parameters.akscluster }}'
+          namespace: '${{ parameters.tier }}'
+          manifests: '$(manifests)'
+        
+ 
