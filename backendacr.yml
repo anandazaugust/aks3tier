@@ -26,8 +26,7 @@ parameters:
    values: 
      - frontend
      - backend
- - name: apiUrl
-   type: string
+
     
 
 
