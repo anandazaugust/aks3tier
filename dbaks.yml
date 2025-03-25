@@ -15,12 +15,6 @@ parameters:
  - name: akscluster
    type: string
    default: aksmar17
- - name: tag
-   type: string
-   default: latest
- - name: acrName
-   type: string
-   default: acrmar19
 
 
  - name: tier
