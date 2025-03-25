@@ -77,7 +77,7 @@ jobs:
               fi
               if ! kubectl get secret mysqlsecret -n ${{ parameters.tier }}; then
               echo "secret does not exist. Creating it now..."
-              kubectl create secret generic mysqlsecret --from-literal=mysql-host=$(mysql-host) --from-literal=mysql-user=$(mysql-user) --from-literal=mysql-password=$(mysql-password)  --from-literal=mysql-database=$(mysql-database) --from-literal=mysql-rootpassword=$(mysql-rootpassword) -n ${{ parameters.tier }}
+              kubectl create secret generic mysqlsecret --from-literal=mysql-user=$(mysql-user) --from-literal=mysql-password=$(mysql-password)  --from-literal=mysql-database=$(mysql-database) --from-literal=mysql-rootpassword=$(mysql-rootpassword) -n ${{ parameters.tier }}
               else
                 echo "secret already exists. Skipping creation."
               fi
