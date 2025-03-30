@@ -28,7 +28,7 @@ metadata:
   name: frontend-lb
   
 spec:
-  type: LoadBalancer # ClusterIp, # NodePort
+  # type: LoadBalancer # ClusterIp, # NodePort
   selector:
     app: frontend3
   ports: 
