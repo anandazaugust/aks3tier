@@ -41,7 +41,8 @@ variables:
 
   akscluster: aksmar17
   aksrg: 'rg-mylabmylabuksouthp-example'
-  manifests: '$(Build.SourcesDirectory)/abcno/${{ parameters.tier }}.yml'
+  # manifests: '$(Build.SourcesDirectory)/abcno/${{ parameters.tier }}.yml'
+  manifests: '$(Build.SourcesDirectory)/abcno/nginx.yml'
 
 jobs: 
 
@@ -76,9 +77,9 @@ jobs:
     
 
 
-      - script: |
-              sed -i "s|#{IMAGE_NAME}#|$(IMAGE_NAME)|g" $(manifests)
-        displayName: 'Replace Image Name in Manifest'
+      # - script: |
+      #         sed -i "s|#{IMAGE_NAME}#|$(IMAGE_NAME)|g" $(manifests)
+      #   displayName: 'Replace Image Name in Manifest'
         
 
       - task: KubernetesManifest@1
